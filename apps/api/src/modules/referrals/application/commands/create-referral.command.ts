@@ -1,16 +1,19 @@
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { CreateReferralCommand } from '@/referrals/application/commands/create-referral/create-referral.command';
+import { CommandHandler, EventPublisher, ICommand, ICommandHandler } from '@nestjs/cqrs';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
 import { Inject, Logger } from '@nestjs/common';
-import {
-  IReferralRepository,
-  REFERRAL_REPOSITORY,
-} from '@/referrals/domain/referral.repository';
+import { IReferralRepository, REFERRAL_REPOSITORY } from '@/referrals/domain/referral.repository';
 import { Referral } from '@/referrals/domain/referral.entity';
 
+export class CreateReferralCommand implements ICommand {
+  constructor(
+    public readonly reference: string,
+    public readonly refereeId: string,
+    public readonly details: ReferralDetails,
+  ) {}
+}
+
 @CommandHandler(CreateReferralCommand)
-export class CreateReferralHandler
-  implements ICommandHandler<CreateReferralCommand> {
-  
+export class CreateReferralHandler implements ICommandHandler<CreateReferralCommand> {
   private readonly logger = new Logger(CreateReferralHandler.name);
   
   constructor(

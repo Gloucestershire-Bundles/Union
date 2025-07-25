@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IReferralRepository } from '@/referrals/domain/referral.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { ReferralEntity } from '@/referrals/infrastructure/persistence/referral.schema';
+import { ReferralEntity } from '@/modules/referrals/infrastructure/schemas/referral.schema';
 import { Model } from 'mongoose';
 import { Referral } from '@/referrals/domain/referral.entity';
 

@@ -7,12 +7,12 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Gender } from '@/referrals/models/enums/gender.enum';
-import { Child } from '@/referrals/models/types/child.type';
-import { ClothingDto } from '@/referrals/application/dtos/shared/clothing.dto';
-import { ItemDto } from '@/referrals/application/dtos/shared/item.dto';
+import { Gender } from '@/referrals/domain/models/enums/gender.enum';
+import { Child } from '@/referrals/domain/models/types/child.type';
+import { ClothingDto } from '@/modules/referrals/application/dtos/lib/clothing.dto';
+import { ItemDto } from '@/modules/referrals/application/dtos/lib/item.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { referralDocs } from '@/referrals/application/dtos/swagger/referral.docs';
+import { referralDocs } from '@/common/swagger/referral.swagger';
 
 export class ChildDto implements Child {
   @ApiProperty({

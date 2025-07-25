@@ -7,8 +7,8 @@ import {
   IsString,
   Min,
 } from 'class-validator';
-import { referralDocs } from '@/referrals/application/dtos/swagger/referral.docs';
-import { Item } from '@/referrals/models/interfaces/item.interface';
+import { referralDocs } from '@/common/swagger/referral.swagger';
+import { Item } from '@/referrals/domain/models/interfaces/item.interface';
 
 export class ItemDto implements Item {
   @ApiProperty({

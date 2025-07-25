@@ -9,7 +9,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateReferralDto } from './application/dtos/create-referral.dto';
 import { generateReference } from 'src/common/utils/generateReference';
-import { CreateReferralCommand } from './application/commands/create-referral/create-referral.command';
+import { CreateReferralCommand } from './application/commands/create-referral.command';
 
 @Controller('/v1/referrals')
 export class ReferralsController {

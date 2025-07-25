@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ReferralStatus } from 'src/common/enums/referral-status.enum';
-import { ReferralDetails } from '@/referrals/models/interfaces/referral-details.interface';
-import { ReferralCreatedEvent } from '@/referrals/application/events/referral-created.event';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
+import { ReferralCreatedEvent } from '@/modules/referrals/application/events/referral-created.event';
 
 export interface ReferralProps {
   reference: string;

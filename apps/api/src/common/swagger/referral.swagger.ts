@@ -1,5 +1,5 @@
-import { Gender } from '@/referrals/models/enums/gender.enum';
-import { Pack } from '@/referrals/models/enums/pack.enum';
+import { Gender } from '@/referrals/domain/models/enums/gender.enum';
+import { Pack } from '@/referrals/domain/models/enums/pack.enum';
 import { ReferralStatus } from '@/common/enums/referral-status.enum';
 
 export const referralDocs = {

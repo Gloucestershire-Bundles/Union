@@ -7,12 +7,12 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ParentDto } from '@/referrals/application/dtos/shared/parent.dto';
+import { ParentDto } from '@/modules/referrals/application/dtos/lib/parent.dto';
 import { Type } from 'class-transformer';
-import { ChildDto } from '@/referrals/application/dtos/shared/child.dto';
-import { ReferralDetails } from '@/referrals/models/interfaces/referral-details.interface';
+import { ChildDto } from '@/modules/referrals/application/dtos/lib/child.dto';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { referralDocs } from '@/referrals/application/dtos/swagger/referral.docs';
+import { referralDocs } from '@/common/swagger/referral.swagger';
 
 export class ReferralDetailsDto implements ReferralDetails {
   @ApiProperty({

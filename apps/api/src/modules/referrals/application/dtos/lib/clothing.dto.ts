@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { referralDocs } from '@/referrals/application/dtos/swagger/referral.docs';
-import { Clothing } from '@/referrals/models/types/clothing.type';
+import { referralDocs } from '@/common/swagger/referral.swagger';
+import { Clothing } from '@/referrals/domain/models/types/clothing.type';
 
 export class ClothingDto implements Clothing {
   @ApiProperty({

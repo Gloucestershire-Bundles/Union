@@ -6,12 +6,12 @@ import {
   IsArray,
   ValidateNested,
 } from 'class-validator';
-import { Gender } from '@/referrals/models/enums/gender.enum';
-import { Parent } from '@/referrals/models/types/parent.type';
-import { ClothingDto } from '@/referrals/application/dtos/shared/clothing.dto';
-import { Pack } from '@/referrals/models/enums/pack.enum';
+import { Gender } from '@/referrals/domain/models/enums/gender.enum';
+import { Parent } from '@/referrals/domain/models/types/parent.type';
+import { ClothingDto } from '@/modules/referrals/application/dtos/lib/clothing.dto';
+import { Pack } from '@/referrals/domain/models/enums/pack.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { referralDocs } from '@/referrals/application/dtos/swagger/referral.docs';
+import { referralDocs } from '@/common/swagger/referral.swagger';
 
 export class ParentDto implements Parent {
   @ApiProperty({
