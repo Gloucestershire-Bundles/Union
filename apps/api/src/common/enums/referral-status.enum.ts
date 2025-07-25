@@ -1,0 +1,11 @@
+export enum ReferralStatus {
+  REVIEW,
+  ACCEPTED,
+  REJECTED,
+  IN_PROGRESS,
+  READY,
+  COLLECTED,
+  NOT_COLLECTED,
+  WITHDRAWN,
+  ARCHIVED,
+}
