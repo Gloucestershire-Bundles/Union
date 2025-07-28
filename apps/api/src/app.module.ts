@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ReferralsModule } from './modules/referrals/referrals.module';
-import { DatabaseModule } from './common/database/database.module';
+import { ReferralsModule } from '@/referrals/referrals.module';
+import { DatabaseModule } from '@/common/database/database.module';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from '@/auth/auth.module';
+import { ClerkAuthGuard } from '@/auth/guards/clerk-auth.guard';
+import { RolesGuard } from '@/auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -22,18 +25,19 @@ import { APP_GUARD } from '@nestjs/core';
       ignoreErrors: false,
     }),
     DatabaseModule,
+    AuthModule,
     ReferralsModule,
   ],
   controllers: [],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ClerkAuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ClerkAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
