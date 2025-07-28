@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ReferralsModule } from './modules/referrals/referrals.module';
+import { DatabaseModule } from './common/database/database.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,11 +21,19 @@ import { ReferralsModule } from './modules/referrals/referrals.module';
       verboseMemoryLeak: false,
       ignoreErrors: false,
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/union'),
+    DatabaseModule,
     ReferralsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ClerkAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
-
 export class AppModule {}

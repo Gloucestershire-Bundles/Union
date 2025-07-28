@@ -40,7 +40,7 @@ export class ChildDto implements Child {
   })
   @IsNotEmpty()
   @IsString()
-  dob: string;
+  dob: Date;
 
   @ApiProperty({
     description: referralDocs.description.child.gender,

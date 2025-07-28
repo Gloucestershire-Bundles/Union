@@ -9,6 +9,8 @@ export interface ReferralProps {
   details: ReferralDetails;
   status: ReferralStatus;
   withdrawnAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Referral extends AggregateRoot implements ReferralProps {
@@ -20,12 +22,12 @@ export class Referral extends AggregateRoot implements ReferralProps {
   createdAt?: Date;
   updatedAt?: Date;
 
-  constructor(props: ReferralProps & { createdAt?: Date; updatedAt?: Date }) {
+  constructor(props: ReferralProps) {
     super();
     Object.assign(this, props);
   }
 
-  static create(
+  static save(
     reference: string,
     refereeId: string,
     details: ReferralDetails,
@@ -36,6 +38,8 @@ export class Referral extends AggregateRoot implements ReferralProps {
       details: details,
       status: ReferralStatus.REVIEW,
       withdrawnAt: undefined,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     referral.apply(

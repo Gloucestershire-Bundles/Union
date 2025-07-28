@@ -3,26 +3,31 @@ import { Gender } from '@/referrals/domain/models/enums/gender.enum';
 import { Document, HydratedDocument, Types } from 'mongoose';
 import { Pack } from '@/referrals/domain/models/enums/pack.enum';
 import { ReferralStatus } from '@/common/enums/referral-status.enum';
+import { Clothing } from '../domain/models/types/clothing.type';
+import { Item } from '../domain/models/interfaces/item.interface';
+import { Child } from '../domain/models/types/child.type';
+import { Parent } from '../domain/models/types/parent.type';
+import { ReferralDetails } from '../domain/models/interfaces/referral-details.interface';
 
-@Schema()
-class Clothing {
+@Schema({ _id: false })
+class ClothingSchemaClass implements Clothing {
   @Prop({ required: true })
   type: string;
 
-  @Prop({ required: true })
-  size: string;
+  @Prop()
+  size?: string;
 
-  @Prop({ required: true })
-  required: boolean;
+  @Prop()
+  required?: boolean;
 
   @Prop()
   notes?: string;
 }
 
-export const ClothingSchema = SchemaFactory.createForClass(Clothing);
+export const ClothingSchema = SchemaFactory.createForClass(ClothingSchemaClass);
 
-@Schema()
-class Item {
+@Schema({ _id: false })
+class ItemSchemaClass implements Item {
   @Prop({ required: true })
   item: string;
 
@@ -36,10 +41,10 @@ class Item {
   notes?: string;
 }
 
-export const ItemSchema = SchemaFactory.createForClass(Item);
+export const ItemSchema = SchemaFactory.createForClass(ItemSchemaClass);
 
 @Schema()
-class Child {
+class ChildSchemaClass implements Child {
   @Prop({ required: true })
   forename: string;
 
@@ -62,10 +67,10 @@ class Child {
   notes?: string;
 }
 
-export const ChildSchema = SchemaFactory.createForClass(Child);
+export const ChildSchema = SchemaFactory.createForClass(ChildSchemaClass);
 
-@Schema()
-class Parent {
+@Schema({ _id: false })
+class ParentSchemaClass implements Parent {
   @Prop({ required: true })
   forename: string;
 
@@ -78,17 +83,17 @@ class Parent {
   @Prop({ enum: Gender, required: true })
   gender: Gender;
 
-  @Prop({ type: [ClothingSchema] })
+  @Prop({ type: [ClothingSchema], default: [] })
   clothing: Types.DocumentArray<Clothing>;
 
-  @Prop({ type: [String], enum: Pack })
+  @Prop({ type: [String], enum: Pack, default: [] })
   packs: Pack[];
 }
 
-export const ParentSchema = SchemaFactory.createForClass(Parent);
+export const ParentSchema = SchemaFactory.createForClass(ParentSchemaClass);
 
 @Schema()
-class ReferralDetails {
+class ReferralDetailsSchemaClass implements ReferralDetails {
   @Prop({ required: true })
   postcode: string;
 
@@ -98,10 +103,10 @@ class ReferralDetails {
   @Prop({ required: true })
   isRepeatFamily: boolean;
 
-  @Prop({ type: [ParentSchema] })
+  @Prop({ type: [ParentSchema], default: [] })
   parents: Types.DocumentArray<Parent>;
 
-  @Prop({ type: [ChildSchema] })
+  @Prop({ type: [ChildSchema], default: [] })
   children: Types.DocumentArray<Child>;
 
   @Prop()
@@ -109,10 +114,10 @@ class ReferralDetails {
 }
 
 export const ReferralDetailsSchema =
-  SchemaFactory.createForClass(ReferralDetails);
+  SchemaFactory.createForClass(ReferralDetailsSchemaClass);
 
 @Schema({ timestamps: true, collection: 'referrals' })
-export class ReferralEntity extends Document {
+export class ReferralEntity {
   @Prop({ required: true, unique: true })
   reference: string;
 
@@ -127,6 +132,9 @@ export class ReferralEntity extends Document {
 
   @Prop({ type: Date, default: null })
   withdrawnAt?: Date;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const ReferralSchema = SchemaFactory.createForClass(ReferralEntity);

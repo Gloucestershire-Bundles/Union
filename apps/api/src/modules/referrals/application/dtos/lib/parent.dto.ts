@@ -36,7 +36,7 @@ export class ParentDto implements Parent {
   })
   @IsNotEmpty()
   @IsString()
-  dob: string;
+  dob: Date;
 
   @ApiProperty({
     description: referralDocs.description.parent.gender,

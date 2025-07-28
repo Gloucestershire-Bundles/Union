@@ -5,7 +5,7 @@ import { Clothing } from '@/referrals/domain/models/types/clothing.type';
 export type Parent = {
   forename: string;
   surname: string;
-  dob: string;
+  dob: Date;
   gender: Gender;
   clothing: Array<Clothing>;
   packs: Array<Pack>;
