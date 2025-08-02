@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   ReferralDocument,
   ReferralEntity,
-} from '@/modules/referrals/infrastructure/referral.schema';
+} from '@/referrals/infrastructure/referral.schema';
 import { Model } from 'mongoose';
 import { Referral } from '@/referrals/domain/referral.entity';
 import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
@@ -20,6 +20,21 @@ export class ReferralDatabaseRepository implements IReferralRepository {
     private referralModel: Model<ReferralDocument>,
     private readonly referralMapper: ReferralMapper,
   ) {}
+
+  /**
+   * Finds a single referral document by reference from the aggreggate.
+   * @param reference The unique business reference.
+   * @returns A Promise resolving to an IReferralReadModel or null.
+   */
+  async findByReference(reference: string): Promise<Referral | null> {
+    const document = await this.referralModel.findOne({ reference }).exec();
+    if (!document) {
+      this.logger.debug(`[${ReferralReadModelDatabaseRepository.name}] No referral found with reference: ${reference}.`);
+      return null;
+    }
+    this.logger.log(`[${ReferralReadModelDatabaseRepository.name}] Found referral with reference: ${reference}.`);
+    return this.referralMapper.toDomain(document);
+  }
 
   /**
    * Saves a Referral aggregate to the database.

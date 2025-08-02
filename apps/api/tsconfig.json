@@ -13,7 +13,6 @@
     "paths": {
       "@/*": ["src/*"],
       "@/common/*": ["src/common/*"],
-      "@/modules/*": ["src/modules/*"],
       "@/referrals/*": ["src/modules/referrals/*"],
       "@/auth/*": ["src/modules/auth/*"],
     },

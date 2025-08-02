@@ -1,9 +1,9 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ReferralStatus } from '@/common/enums/referral-status.enum';
 import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
-import { ReferralCreatedEvent } from '@/modules/referrals/application/events/created/referral-created.event';
-import { ReferralWithdrawnEvent } from '@/modules/referrals/application/events/withdrawn/referral-withdrawn.event';
-import { ReferralArchivedEvent } from '@/modules/referrals/application/events/archived/referral-archived.event';
+import { ReferralCreatedEvent } from '@/referrals/application/events/created/referral-created.event';
+import { ReferralWithdrawnEvent } from '@/referrals/application/events/withdrawn/referral-withdrawn.event';
+import { ReferralArchivedEvent } from '@/referrals/application/events/archived/referral-archived.event';
 import { ReferralAcceptedEvent } from '@/referrals/application/events/accepted/referral-accepted.event';
 import { ReferralCollectedEvent } from '@/referrals/application/events/collected/referral-collected.event';
 import { ReferralNotCollectedEvent } from '@/referrals/application/events/not-collected/referral-not-collected.event';
@@ -78,14 +78,14 @@ export class Referral extends AggregateRoot implements ReferralProps {
     }
 
     const oldStatus = this.status;
-    
+
     switch (newStatus) {
       case ReferralStatus.ARCHIVED:
         this.status = ReferralStatus.ARCHIVED;
         this.archivedAt = new Date();
         this.apply(new ReferralArchivedEvent(this.reference, reason, this.archivedAt));
         break;
-      
+
       case ReferralStatus.WITHDRAWN:
         if (this.status === ReferralStatus.ARCHIVED) {
           throw new Error(`Referral ${this.reference} cannot be withdrawn from its current status: ${this.status}.`);
@@ -113,9 +113,12 @@ export class Referral extends AggregateRoot implements ReferralProps {
         this.status = ReferralStatus.COLLECTED;
         this.apply(new ReferralCollectedEvent(this.reference));
         break;
-      
+
       case ReferralStatus.READY:
-        if (this.status !== ReferralStatus.IN_PROGRESS && this.status !== ReferralStatus.ACCEPTED) {
+        if (
+          this.status !== ReferralStatus.IN_PROGRESS &&
+          this.status !== ReferralStatus.ACCEPTED
+        ) {
           throw new Error(`Referral ${this.reference} cannot be set to "Ready" from ${this.status}. It must first be In Progress or Accepted.`);
         }
 
@@ -133,7 +136,10 @@ export class Referral extends AggregateRoot implements ReferralProps {
         break;
 
       case ReferralStatus.REJECTED:
-        if (this.status !== ReferralStatus.REVIEW && this.status !== ReferralStatus.ACCEPTED) {
+        if (
+          this.status !== ReferralStatus.REVIEW &&
+          this.status !== ReferralStatus.ACCEPTED
+        ) {
           throw new Error(`Referral ${this.reference} cannot be rejected from status ${this.status}.`);
         }
 
@@ -147,7 +153,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.ACCEPTED;
-        this.apply(new ReferralAcceptedEvent(this.reference))
+        this.apply(new ReferralAcceptedEvent(this.reference));
         break;
 
       case ReferralStatus.REVIEW:
@@ -161,6 +167,26 @@ export class Referral extends AggregateRoot implements ReferralProps {
         throw new Error(`Unsupported status transition from ${this.status} to ${newStatus} for referral ${this.reference}.`);
     }
 
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Updates the mutable details of the referral.
+   * This method applies changes to the `details` value object.
+   *
+   * @param newDetails The new details to apply to the referral.
+   * @throws {Error} If the referral's current status disallows details updates.
+   */
+  updateDetails(newDetails: ReferralDetails): void {
+    if (this.status === ReferralStatus.ARCHIVED || this.status === ReferralStatus.WITHDRAWN) {
+      throw new Error(`Referral ${this.reference} details cannot be updated when in status ${this.status}.`);
+    }
+
+    if (JSON.stringify(this.details) === JSON.stringify(newDetails)) {
+        return;
+    }
+
+    this.details = newDetails;
     this.updatedAt = new Date();
   }
 }

@@ -21,10 +21,13 @@ import { GetReferralsByRefereeQuery } from '@/referrals/application/queries/get-
 import { GetReferralsQuery } from '@/referrals/application/queries/get-all/get-referrals.query';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/common/enums/role.enum';
-import { UpdateReferralDto } from '@/referrals/application/dtos/update-referral.dto';
+import { UpdateReferralDetailsDto } from '@/referrals/application/dtos/update-referral-details.dto';
 import { DeleteReferralCommand } from '@/referrals/application/commands/delete/delete-referral.command';
 import { ReferralNotFoundException } from '@/referrals/domain/referral.exception';
-import { UpdateReferralCommand } from './application/commands/update/update-referral.command';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
+import { UpdateReferralStatusDto } from '@/referrals/application/dtos/update-referral-status.dto';
+import { UpdateReferralStatusCommand } from '@/referrals/application/commands/update/update-referral-status.command';
+import { UpdateReferralDetailsCommand } from '@/referrals/application/commands/update/update-referral-details.command';
 
 @Controller('/v1/referrals')
 export class ReferralsController {
@@ -120,48 +123,72 @@ export class ReferralsController {
     return referrals;
   }
 
-  @Patch(':reference')
+  /**
+   * Handles PATCH /v1/referrals/:reference/details to update ONLY the mutable details of a referral.
+   * This is a partial update for the referral's data.
+   * @param reference The unique business reference of the referral.
+   * @param updateReferralDetailsDto The DTO containing the new details.
+   * @returns A success message.
+   * @throws {NotFoundException} If the referral is not found.
+   * @throws {ConflictException} If details cannot be updated in the current state (e.g., archived).
+   */
+  @Patch(':reference/details')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.OK)
-  async edit(
+  async updateReferralDetails(
     @Param('reference') reference: string,
-    @Body() updateReferralDto: UpdateReferralDto,
+    @Body() updateReferralDetailsDto: UpdateReferralDetailsDto,
   ) {
-    // edit referral logic
+    const domainDetails: ReferralDetails = updateReferralDetailsDto.details;
+    const command = new UpdateReferralDetailsCommand(reference, domainDetails);
+
+    try {
+      await this.commandBus.execute(command);
+      return { message: `Referral ${reference} details updated.` };
+    } catch (error) {
+      if (error instanceof ReferralNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw error;
+    }
   }
 
   /**
-   * Handles PATCH /v1/referrals/:reference to update the status of a referral.
-   * This is a partial update for the referral resource.
-   * @param reference The unique business reference of the referral to update.
-   * @param updateReferralDto The DTO containing the new status and optional reason.
+   * Handles PATCH /v1/referrals/:reference/status to update ONLY the status of a referral.
+   * This is a specific action for state transitions.
+   * @param reference The unique business reference of the referral.
+   * @param updateReferralStatusDto The DTO containing the new status and optional reason.
    * @returns A success message.
    * @throws {NotFoundException} If the referral is not found.
    * @throws {ConflictException} If the status transition is invalid according to business rules.
    */
-  @Patch(':reference')
+  @Patch(':reference/status')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.OK)
   async updateReferralStatus(
     @Param('reference') reference: string,
-    @Body() updateReferralDto: UpdateReferralDto,
+    @Body() updateReferralStatusDto: UpdateReferralStatusDto,
   ) {
-    const command = new UpdateReferralCommand(
+    const command = new UpdateReferralStatusCommand(
       reference,
-      updateReferralDto.status,
-      updateReferralDto.details,
-      updateReferralDto.reason,
+      updateReferralStatusDto.status,
+      updateReferralStatusDto.reason,
     );
 
     try {
       await this.commandBus.execute(command);
       return {
-        message: `Referral ${reference} status updated to ${updateReferralDto.status}.`,
+        message: `Referral ${reference} status updated to ${updateReferralStatusDto.status}.`,
       };
     } catch (error) {
       if (error instanceof ReferralNotFoundException) {
         throw new NotFoundException(error.message);
       }
+
       if (error instanceof ConflictException) {
         throw error;
       }
@@ -191,18 +218,4 @@ export class ReferralsController {
       throw error;
     }
   }
-
-  // @Post(':reference/withdraw')
-  // @Roles(Role.USER, Role.VOLUNTEER, Role.ADMINISTRATOR)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async withdraw() {
-
-  // }
-
-  // @Post('/archive')
-  // @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // async archive() {
-
-  // }
 }

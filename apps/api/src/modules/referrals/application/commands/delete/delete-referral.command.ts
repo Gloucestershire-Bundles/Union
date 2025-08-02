@@ -7,5 +7,8 @@ import { ICommand } from '@nestjs/cqrs';
  * Uses the unique business reference to identify the referral.
  */
 export class DeleteReferralCommand implements ICommand {
+  /**
+   * @param reference The unique reference of the referral.
+   */
   constructor(public readonly reference: string) {}
 }
