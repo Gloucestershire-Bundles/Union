@@ -7,6 +7,7 @@ export interface IReferralReadModel {
   details: ReferralDetails;
   status: ReferralStatus;
   withdrawnAt?: Date;
+  archivedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

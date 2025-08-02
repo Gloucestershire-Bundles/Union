@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Gender } from '@/referrals/domain/models/enums/gender.enum';
-import { Document, HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Pack } from '@/referrals/domain/models/enums/pack.enum';
 import { ReferralStatus } from '@/common/enums/referral-status.enum';
-import { Clothing } from '../domain/models/types/clothing.type';
-import { Item } from '../domain/models/interfaces/item.interface';
-import { Child } from '../domain/models/types/child.type';
-import { Parent } from '../domain/models/types/parent.type';
-import { ReferralDetails } from '../domain/models/interfaces/referral-details.interface';
+import { Clothing } from '@/referrals/domain/models/types/clothing.type';
+import { Item } from '@/referrals/domain/models/interfaces/item.interface';
+import { Child } from '@/referrals/domain/models/types/child.type';
+import { Parent } from '@/referrals/domain/models/types/parent.type';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
 
 @Schema({ _id: false })
 class ClothingSchemaClass implements Clothing {
@@ -132,6 +132,9 @@ export class ReferralEntity {
 
   @Prop({ type: Date, default: null })
   withdrawnAt?: Date;
+
+  @Prop({ type: Date, default: null })
+  archivedAt?: Date;
 
   createdAt?: Date;
   updatedAt?: Date;

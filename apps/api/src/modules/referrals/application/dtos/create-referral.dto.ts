@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ReferralDetailsDto } from '@/modules/referrals/application/dtos/lib/referral-details.dto';
+import { ReferralDetailsDto } from '@/referrals/application/dtos/lib/referral-details.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { referralDocs } from '@/common/swagger/referral.swagger';
 

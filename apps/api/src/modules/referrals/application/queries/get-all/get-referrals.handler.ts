@@ -1,16 +1,8 @@
-import { Inject, Logger } from '@nestjs/common';
-import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { IReferralReadModelRepository, REFERRAL_READ_MODEL_REPOSITORY } from '@/referrals/domain/referral.repository';
-import { IReferralReadModel } from '@/modules/referrals/domain/models/referral-read-model.interface';
-
-/**
- * @class GetReferralsQuery
- * @implements {IQuery}
- * @description Query to retrieve all referrals in the system.
- */
-export class GetReferralsQuery implements IQuery {
-  constructor() {}
-}
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
+import { GetReferralsQuery } from "./get-referrals.query";
+import { IReferralReadModelRepository, REFERRAL_READ_MODEL_REPOSITORY } from "@/referrals/domain/read-model/referral-read-model.repository";
+import { Inject, Logger } from "@nestjs/common";
+import { IReferralReadModel } from "@/referrals/domain/read-model/referral-read-model.interface";
 
 /**
  * @class GetReferralsHandler

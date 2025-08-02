@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  IReferralReadModelRepository,
-  IReferralRepository,
-} from '@/referrals/domain/referral.repository';
+import { IReferralRepository } from '@/referrals/domain/referral.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ReferralDocument,
@@ -10,8 +7,9 @@ import {
 } from '@/modules/referrals/infrastructure/referral.schema';
 import { Model } from 'mongoose';
 import { Referral } from '@/referrals/domain/referral.entity';
-import { IReferralReadModel } from '../domain/models/referral-read-model.interface';
-import { ReferralMapper } from '../application/referral.mapper';
+import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
+import { ReferralMapper } from '@/referrals/application/referral.mapper';
+import { IReferralReadModelRepository } from '@/referrals/domain/read-model/referral-read-model.repository';
 
 @Injectable()
 export class ReferralDatabaseRepository implements IReferralRepository {

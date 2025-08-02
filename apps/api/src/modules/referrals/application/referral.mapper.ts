@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import {
   ReferralDocument,
   ReferralEntity,
-} from '../infrastructure/referral.schema';
-import { Referral } from '../domain/referral.entity';
+} from '@/referrals/infrastructure/referral.schema';
+import { Referral } from '@/referrals/domain/referral.entity';
 import { ReferralStatus } from '@/common/enums/referral-status.enum';
-import { IReferralReadModel } from '../domain/models/referral-read-model.interface';
+import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
 
 @Injectable()
 export class ReferralMapper {
@@ -25,6 +25,7 @@ export class ReferralMapper {
       details: document.details,
       status: document.status as ReferralStatus,
       withdrawnAt: document.withdrawnAt,
+      archivedAt: document.archivedAt,
       createdAt: document.createdAt,
       updatedAt: document.updatedAt,
     });
@@ -48,6 +49,7 @@ export class ReferralMapper {
       details: referral.details,
       status: referral.status,
       withdrawnAt: referral.withdrawnAt,
+      archivedAt: referral.archivedAt,
     };
   }
 
@@ -66,6 +68,7 @@ export class ReferralMapper {
       details: document.details,
       status: document.status,
       withdrawnAt: document.withdrawnAt,
+      archivedAt: document.archivedAt,
       createdAt: document.createdAt ?? new Date(),
       updatedAt: document.updatedAt ?? new Date(),
     };

@@ -12,18 +12,19 @@ import {
   Post,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateReferralDto } from './application/dtos/create-referral.dto';
-import { generateReference } from 'src/common/utils/generateReference';
-import { CreateReferralCommand } from './application/commands/create-referral.command';
-import { IReferralReadModel } from './domain/models/referral-read-model.interface';
-import { GetReferralByReferenceQuery } from './application/queries/get-referral-by-reference.query';
-import { GetReferralsByRefereeIdQuery } from './application/queries/get-referral-by-referee-id.query';
-import { GetReferralsQuery } from './application/queries/get-referrals.query';
+import { CreateReferralDto } from '@/referrals/application/dtos/create-referral.dto';
+import { generateReference } from '@/common/utils/generateReference';
+import { CreateReferralCommand } from '@/referrals/application/commands/create/create-referral.command';
+import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
+import { GetReferralByReferenceQuery } from '@/referrals/application/queries/get-by-reference/get-referral-by-reference.query';
+import { GetReferralsByRefereeQuery } from '@/referrals/application/queries/get-by-referee/get-referrals-by-referee.query';
+import { GetReferralsQuery } from '@/referrals/application/queries/get-all/get-referrals.query';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Role } from '@/common/enums/role.enum';
-import { UpdateReferralDto } from './application/dtos/update-referral.dto';
-import { DeleteReferralCommand } from './application/commands/delete-referral.command';
-import { ReferralNotFoundException } from './domain/referral.exception';
+import { UpdateReferralDto } from '@/referrals/application/dtos/update-referral.dto';
+import { DeleteReferralCommand } from '@/referrals/application/commands/delete/delete-referral.command';
+import { ReferralNotFoundException } from '@/referrals/domain/referral.exception';
+import { UpdateReferralCommand } from './application/commands/update/update-referral.command';
 
 @Controller('/v1/referrals')
 export class ReferralsController {
@@ -42,7 +43,7 @@ export class ReferralsController {
   @Post()
   @Roles(Role.USER, Role.VOLUNTEER, Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.CREATED)
-  async createReferral(@Body() createReferralDto: CreateReferralDto) {
+  async create(@Body() createReferralDto: CreateReferralDto) {
     const reference = generateReference();
     const command = new CreateReferralCommand(
       reference,
@@ -100,7 +101,7 @@ export class ReferralsController {
   async getReferralsByRefereeId(
     @Param('refereeId') refereeId: string,
   ): Promise<Array<IReferralReadModel>> {
-    const query = new GetReferralsByRefereeIdQuery(refereeId);
+    const query = new GetReferralsByRefereeQuery(refereeId);
     const referrals = await this.queryBus.execute(query);
     return referrals;
   }
@@ -122,11 +123,50 @@ export class ReferralsController {
   @Patch(':reference')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.OK)
-  async editReferral(
+  async edit(
     @Param('reference') reference: string,
     @Body() updateReferralDto: UpdateReferralDto,
   ) {
     // edit referral logic
+  }
+
+  /**
+   * Handles PATCH /v1/referrals/:reference to update the status of a referral.
+   * This is a partial update for the referral resource.
+   * @param reference The unique business reference of the referral to update.
+   * @param updateReferralDto The DTO containing the new status and optional reason.
+   * @returns A success message.
+   * @throws {NotFoundException} If the referral is not found.
+   * @throws {ConflictException} If the status transition is invalid according to business rules.
+   */
+  @Patch(':reference')
+  @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
+  @HttpCode(HttpStatus.OK)
+  async updateReferralStatus(
+    @Param('reference') reference: string,
+    @Body() updateReferralDto: UpdateReferralDto,
+  ) {
+    const command = new UpdateReferralCommand(
+      reference,
+      updateReferralDto.status,
+      updateReferralDto.details,
+      updateReferralDto.reason,
+    );
+
+    try {
+      await this.commandBus.execute(command);
+      return {
+        message: `Referral ${reference} status updated to ${updateReferralDto.status}.`,
+      };
+    } catch (error) {
+      if (error instanceof ReferralNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw error;
+    }
   }
 
   /**
@@ -139,7 +179,7 @@ export class ReferralsController {
   @Delete(':reference')
   @Roles(Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteReferral(@Param('reference') reference: string) {
+  async delete(@Param('reference') reference: string) {
     const command = new DeleteReferralCommand(reference);
     try {
       await this.commandBus.execute(command);
@@ -151,4 +191,18 @@ export class ReferralsController {
       throw error;
     }
   }
+
+  // @Post(':reference/withdraw')
+  // @Roles(Role.USER, Role.VOLUNTEER, Role.ADMINISTRATOR)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // async withdraw() {
+
+  // }
+
+  // @Post('/archive')
+  // @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // async archive() {
+
+  // }
 }

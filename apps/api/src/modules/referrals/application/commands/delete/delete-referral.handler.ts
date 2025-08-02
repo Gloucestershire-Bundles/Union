@@ -1,20 +1,8 @@
-import { Inject, Logger } from '@nestjs/common';
-import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import {
-  IReferralRepository,
-  REFERRAL_REPOSITORY,
-} from '../../domain/referral.repository';
-import { ReferralNotFoundException } from '../../domain/referral.exception';
-
-/**
- * @class DeleteReferralCommand
- * @implements {ICommand}
- * @description Command to initiate the permanent deletion of a referral.
- * Uses the unique business reference to identify the referral.
- */
-export class DeleteReferralCommand implements ICommand {
-  constructor(public readonly reference: string) {}
-}
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { DeleteReferralCommand } from "./delete-referral.command";
+import { Inject, Logger } from "@nestjs/common";
+import { IReferralRepository, REFERRAL_REPOSITORY } from "@/referrals/domain/referral.repository";
+import { ReferralNotFoundException } from "@/referrals/domain/referral.exception";
 
 /**
  * @class DeleteReferralHandler
@@ -43,15 +31,11 @@ export class DeleteReferralHandler implements ICommandHandler<DeleteReferralComm
   async execute(command: DeleteReferralCommand): Promise<void> {
     const { reference } = command;
 
-    this.logger.debug(
-      `[${DeleteReferralHandler.name}] Attempting to delete referral: ${reference}.`,
-    );
+    this.logger.debug(`[${DeleteReferralHandler.name}] Attempting to delete referral: ${reference}.`);
 
     const isDeleted = await this.referralRepository.delete(reference);
     if (isDeleted) throw new ReferralNotFoundException(reference);
 
-    this.logger.log(
-      `[${DeleteReferralHandler.name}] Referral with reference ${reference} successfully deleted.`,
-    );
+    this.logger.log(`[${DeleteReferralHandler.name}] Referral with reference ${reference} successfully deleted.`);
   }
 }

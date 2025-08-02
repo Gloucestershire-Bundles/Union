@@ -1,20 +1,9 @@
-import { Inject, Logger } from '@nestjs/common';
-import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import {
-  IReferralReadModelRepository,
-  REFERRAL_READ_MODEL_REPOSITORY,
-} from '@/referrals/domain/referral.repository';
-import { IReferralReadModel } from '@/modules/referrals/domain/models/referral-read-model.interface';
-import { ReferralNotFoundException } from '../../domain/referral.exception';
-
-/**
- * @class GetReferralByReferenceQuery
- * @implements {IQuery}
- * @description Query to retrieve a single referral by its unique business reference.
- */
-export class GetReferralByReferenceQuery implements IQuery {
-  constructor(public readonly reference: string) {}
-}
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
+import { GetReferralByReferenceQuery } from "./get-referral-by-reference.query";
+import { Inject, Logger } from "@nestjs/common";
+import { IReferralReadModelRepository, REFERRAL_READ_MODEL_REPOSITORY } from "@/referrals/domain/read-model/referral-read-model.repository";
+import { IReferralReadModel } from "@/referrals/domain/read-model/referral-read-model.interface";
+import { ReferralNotFoundException } from "@/referrals/domain/referral.exception";
 
 /**
  * @class GetReferralByReferenceHandler
@@ -23,9 +12,7 @@ export class GetReferralByReferenceQuery implements IQuery {
  * referral read model from the read model repository.
  */
 @QueryHandler(GetReferralByReferenceQuery)
-export class GetReferralByReferenceHandler
-  implements IQueryHandler<GetReferralByReferenceQuery>
-{
+export class GetReferralByReferenceHandler implements IQueryHandler<GetReferralByReferenceQuery> {
   private readonly logger = new Logger(GetReferralByReferenceHandler.name);
 
   constructor(
@@ -39,10 +26,12 @@ export class GetReferralByReferenceHandler
    * @returns A Promise that resolves with the IReferralReadModel if found.
    * @throws {ReferralNotFoundException} If the referral is not found.
    */
-  async execute(query: GetReferralByReferenceQuery): Promise<IReferralReadModel> {
+  async execute(
+    query: GetReferralByReferenceQuery,
+  ): Promise<IReferralReadModel> {
     this.logger.debug(`[${GetReferralByReferenceHandler.name}] Fetching referral with reference: ${query.reference}.`);
 
-    const referral = await this.referralReadModelRepository.findByReference(query.reference);
+    const referral = await this.referralReadModelRepository.findByReference(query.reference,);
     if (!referral) throw new ReferralNotFoundException(query.reference);
 
     this.logger.log(`[${GetReferralByReferenceHandler.name}] Found referral: ${query.reference}.`);

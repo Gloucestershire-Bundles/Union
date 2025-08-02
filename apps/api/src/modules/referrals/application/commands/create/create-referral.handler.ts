@@ -1,27 +1,8 @@
-import { CommandHandler, EventPublisher, ICommand, ICommandHandler } from '@nestjs/cqrs';
-import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
-import { ConflictException, Inject, Logger } from '@nestjs/common';
-import { IReferralRepository, REFERRAL_REPOSITORY } from '@/referrals/domain/referral.repository';
-import { Referral } from '@/referrals/domain/referral.entity';
-
-/**
- * @class CreateReferralCommand
- * @implements {ICommand}
- * @description Command to initiate the creation of a new referral.
- * Contains all necessary data to construct a Referral Aggregate Root.
- */
-export class CreateReferralCommand implements ICommand {
-  /**
-   * @param reference The unique ID for the new referral, typically generated before the command.
-   * @param refereeId The ID of the referee creating the referral.
-   * @param details The detailed information for the referral.
-   */
-  constructor(
-    public readonly reference: string,
-    public readonly refereeId: string,
-    public readonly details: ReferralDetails,
-  ) {}
-}
+import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
+import { CreateReferralCommand } from "./create-referral.command";
+import { ConflictException, Inject, Logger } from "@nestjs/common";
+import { IReferralRepository, REFERRAL_REPOSITORY } from "@/modules/referrals/domain/referral.repository";
+import { Referral } from "@/modules/referrals/domain/referral.entity";
 
 /**
  * @class CreateReferralHandler
@@ -30,9 +11,11 @@ export class CreateReferralCommand implements ICommand {
  * persisting its state, and publishing relevant domain events.
  */
 @CommandHandler(CreateReferralCommand)
-export class CreateReferralHandler implements ICommandHandler<CreateReferralCommand> {
+export class CreateReferralHandler
+  implements ICommandHandler<CreateReferralCommand>
+{
   private readonly logger = new Logger(CreateReferralHandler.name);
-  
+
   constructor(
     @Inject(REFERRAL_REPOSITORY)
     private readonly referralRepository: IReferralRepository,
@@ -54,7 +37,7 @@ export class CreateReferralHandler implements ICommandHandler<CreateReferralComm
     const referral = this.publisher.mergeObjectContext(
       Referral.save(reference, refereeId, details),
     );
-    
+
     try {
       await this.referralRepository.save(referral);
     } catch (error) {
@@ -62,7 +45,10 @@ export class CreateReferralHandler implements ICommandHandler<CreateReferralComm
         this.logger.warn(`[${CreateReferralHandler.name}] Referral with reference ${reference} already exists.`);
         throw new ConflictException(`Referral with reference ${reference} already exists.`);
       }
-      this.logger.error(`[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error.message}`, error.stack);
+      this.logger.error(
+        `[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
 
