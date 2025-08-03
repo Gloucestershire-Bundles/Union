@@ -27,7 +27,7 @@ export class GetCommentByReferralHandler implements IQueryHandler<GetCommentByRe
   async execute(query: GetCommentByReferralQuery): Promise<Array<ICommentReadModel>> {
     this.logger.debug(`[${GetCommentByReferralHandler.name}] Fetching comments for referral: ${query.reference}.`);
     
-    const comments = await this.commentReadModelRepository.findByreferralReference(query.reference);
+    const comments = await this.commentReadModelRepository.findByReferral(query.reference);
     
     this.logger.log(`[${GetCommentByReferralHandler.name}] Found ${comments.length} comments for referral ${query.reference}`);
     return comments;

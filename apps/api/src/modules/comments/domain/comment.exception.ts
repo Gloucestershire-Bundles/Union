@@ -5,6 +5,6 @@ import { NotFoundException } from '@nestjs/common';
  */
 export class CommentNotFoundException extends NotFoundException {
   constructor(id: string) {
-    super(`Referral with reference ${id} not found.`);
+    super(`Referral with ID ${id} not found.`);
   }
 }

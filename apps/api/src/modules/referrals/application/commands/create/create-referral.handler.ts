@@ -1,8 +1,11 @@
-import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
-import { CreateReferralCommand } from "./create-referral.command";
-import { ConflictException, Inject, Logger } from "@nestjs/common";
-import { IReferralRepository, REFERRAL_REPOSITORY } from "@/modules/referrals/domain/referral.repository";
-import { Referral } from "@/modules/referrals/domain/referral.entity";
+import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
+import { CreateReferralCommand } from './create-referral.command';
+import { ConflictException, Inject, Logger } from '@nestjs/common';
+import {
+  IReferralRepository,
+  REFERRAL_REPOSITORY,
+} from '@/modules/referrals/domain/referral.repository';
+import { Referral } from '@/modules/referrals/domain/referral.entity';
 
 /**
  * @class CreateReferralHandler
@@ -33,7 +36,9 @@ export class CreateReferralHandler
   async execute(command: CreateReferralCommand): Promise<Referral> {
     const { reference, refereeId, details } = command;
 
-    this.logger.debug(`[${CreateReferralHandler.name}] Attempting to create referral: ${reference}.`);
+    this.logger.debug(
+      `[${CreateReferralHandler.name}] Attempting to create referral: ${reference}.`,
+    );
     const referral = this.publisher.mergeObjectContext(
       Referral.save(reference, refereeId, details),
     );
@@ -42,8 +47,12 @@ export class CreateReferralHandler
       await this.referralRepository.save(referral);
     } catch (error) {
       if (error.code === 11000 && error.message.includes('reference')) {
-        this.logger.warn(`[${CreateReferralHandler.name}] Referral with reference ${reference} already exists.`);
-        throw new ConflictException(`Referral with reference ${reference} already exists.`);
+        this.logger.warn(
+          `[${CreateReferralHandler.name}] Referral with reference ${reference} already exists.`,
+        );
+        throw new ConflictException(
+          `Referral with reference ${reference} already exists.`,
+        );
       }
       this.logger.error(
         `[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error.message}`,
@@ -54,7 +63,9 @@ export class CreateReferralHandler
 
     referral.commit();
 
-    this.logger.log(`[${CreateReferralHandler.name}] Referral ${referral.reference} successfully created.`);
+    this.logger.log(
+      `[${CreateReferralHandler.name}] Referral ${referral.reference} successfully created.`,
+    );
     return referral;
   }
 }

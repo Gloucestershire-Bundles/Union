@@ -21,5 +21,5 @@ export interface ICommentReadModelRepository {
    * @returns A Promise that resolves with an array of ICommentReadModel.
    * Returns an empty array if no comments are found for the given referral.
    */
-  findByreferralReference(referralReference: string): Promise<Array<ICommentReadModel>>;
+  findByReferral(reference: string): Promise<Array<ICommentReadModel>>;
 }
