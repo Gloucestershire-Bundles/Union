@@ -14,6 +14,7 @@
       "@/*": ["src/*"],
       "@/common/*": ["src/common/*"],
       "@/referrals/*": ["src/modules/referrals/*"],
+      "@/comments/*": ["src/modules/comments/*"],
       "@/auth/*": ["src/modules/auth/*"],
     },
     "incremental": true,

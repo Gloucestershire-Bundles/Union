@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from '@/auth/auth.module';
 import { ClerkAuthGuard } from '@/auth/guards/clerk-auth.guard';
 import { RolesGuard } from '@/auth/guards/roles.guard';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RolesGuard } from '@/auth/guards/roles.guard';
     DatabaseModule,
     AuthModule,
     ReferralsModule,
+    CommentsModule,
   ],
   controllers: [],
   providers: [

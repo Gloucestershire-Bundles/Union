@@ -34,9 +34,7 @@ const QueryHandlers = [
   GetReferralByReferenceHandler,
   GetReferralsHandler,
 ];
-const EventHandlers = [
-  
-];
+const EventHandlers = [];
 
 @Module({
   imports: [
