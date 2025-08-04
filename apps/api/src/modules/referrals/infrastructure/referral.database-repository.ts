@@ -29,10 +29,10 @@ export class ReferralDatabaseRepository implements IReferralRepository {
   async findByReference(reference: string): Promise<Referral | null> {
     const document = await this.referralModel.findOne({ reference }).exec();
     if (!document) {
-      this.logger.debug(`[${ReferralReadModelDatabaseRepository.name}] No referral found with reference: ${reference}.`);
+      this.logger.debug(`[${ReferralDatabaseRepository.name}] No referral found with reference: ${reference}.`);
       return null;
     }
-    this.logger.log(`[${ReferralReadModelDatabaseRepository.name}] Found referral with reference: ${reference}.`);
+    this.logger.log(`[${ReferralDatabaseRepository.name}] Found referral with reference: ${reference}.`);
     return this.referralMapper.toDomain(document);
   }
 
@@ -57,7 +57,7 @@ export class ReferralDatabaseRepository implements IReferralRepository {
 
     await this.referralModel.findOneAndUpdate(filter, persistenceObject, options).exec();
 
-    this.logger.log(`[${ReferralDatabaseRepository.name}] Referral saved: ${referral.reference}. (Created/Updated)`);
+    this.logger.log(`[${ReferralDatabaseRepository.name}] Referral saved: ${referral.reference}.`);
   }
 
   /**

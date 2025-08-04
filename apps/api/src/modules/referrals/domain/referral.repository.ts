@@ -18,7 +18,9 @@ export interface IReferralRepository {
   findByReference(reference: string): Promise<Referral | null>;
 
   /**
-   * Creates a Referral aggregate.
+   * Persists the state of a Referral aggregate.
+   * This method handles both creation of new referrals and updates to existing ones
+   * based on the aggregate's unique reference.
    * @param referral The Referral aggregate to save.
    * @returns A Promise that resolves when the operation is complete.
    */

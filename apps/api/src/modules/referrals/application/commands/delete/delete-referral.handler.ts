@@ -34,7 +34,7 @@ export class DeleteReferralHandler implements ICommandHandler<DeleteReferralComm
     this.logger.debug(`[${DeleteReferralHandler.name}] Attempting to delete referral: ${reference}.`);
 
     const isDeleted = await this.referralRepository.delete(reference);
-    if (isDeleted) throw new ReferralNotFoundException(reference);
+    if (!isDeleted) throw new ReferralNotFoundException(reference);
 
     this.logger.log(`[${DeleteReferralHandler.name}] Referral with reference ${reference} successfully deleted.`);
   }

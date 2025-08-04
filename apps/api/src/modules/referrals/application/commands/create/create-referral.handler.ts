@@ -6,6 +6,7 @@ import {
   REFERRAL_REPOSITORY,
 } from '@/modules/referrals/domain/referral.repository';
 import { Referral } from '@/modules/referrals/domain/referral.entity';
+import { ReferralAlreadyExistsException } from '@/modules/referrals/domain/referral.exception';
 
 /**
  * @class CreateReferralHandler
@@ -40,7 +41,7 @@ export class CreateReferralHandler
       `[${CreateReferralHandler.name}] Attempting to create referral: ${reference}.`,
     );
     const referral = this.publisher.mergeObjectContext(
-      Referral.save(reference, refereeId, details),
+      Referral.create(reference, refereeId, details),
     );
 
     try {
@@ -50,9 +51,7 @@ export class CreateReferralHandler
         this.logger.warn(
           `[${CreateReferralHandler.name}] Referral with reference ${reference} already exists.`,
         );
-        throw new ConflictException(
-          `Referral with reference ${reference} already exists.`,
-        );
+        throw new ReferralAlreadyExistsException(reference);
       }
       this.logger.error(
         `[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error.message}`,

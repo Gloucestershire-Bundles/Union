@@ -37,7 +37,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
     Object.assign(this, props);
   }
 
-  static save(
+  static create(
     reference: string,
     refereeId: string,
     details: ReferralDetails,
@@ -49,8 +49,6 @@ export class Referral extends AggregateRoot implements ReferralProps {
       status: ReferralStatus.REVIEW,
       withdrawnAt: undefined,
       archivedAt: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     });
 
     referral.apply(
@@ -73,9 +71,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
    * @throws {Error} If the status transition is invalid according to business rules.
    */
   updateStatus(newStatus: ReferralStatus, reason?: string): void {
-    if (this.status === newStatus) {
-      return;
-    }
+    if (this.status === newStatus) { return; }
 
     const oldStatus = this.status;
 
@@ -160,7 +156,6 @@ export class Referral extends AggregateRoot implements ReferralProps {
         if (oldStatus !== ReferralStatus.REVIEW) {
           throw new Error(`Referral ${this.reference} cannot revert to "Review" status from ${oldStatus}.`);
         }
-
         break;
 
       default:

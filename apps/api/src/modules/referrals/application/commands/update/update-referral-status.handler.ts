@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateReferralStatusCommand } from './update-referral-status.command';
-import { ConflictException, Inject, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Logger } from '@nestjs/common';
 import {
   IReferralRepository,
   REFERRAL_REPOSITORY,
@@ -34,7 +34,7 @@ export class UpdateReferralStatusHandler implements ICommandHandler<UpdateReferr
       mergedReferral.updateStatus(newStatus, reason);
     } catch (error) {
       this.logger.warn(`[${UpdateReferralStatusHandler.name}] Invalid status transition for referral ${reference}: ${error.message}.`);
-      throw new ConflictException(error.message);
+      throw new BadRequestException(error.message);
     }
 
     await this.referralRepository.save(mergedReferral);
