@@ -9,9 +9,22 @@ import {
 } from '@/comments/infrastructure/comment.database-repository';
 import { COMMENT_READ_MODEL_REPOSITORY } from '@/comments/domain/read-model/comment-read-model.repository';
 import { CommentMapper } from '@/comments/application/comment.mapper';
+import { CreateCommentHandler } from './application/commands/create/create-comment.handler';
+import { UpdateCommentHandler } from './application/commands/update/update-comment.handler';
+import { DeleteCommentHandler } from './application/commands/delete/delete-comment.handler';
+import { GetCommentByIdHandler } from './application/queries/get-by-id/get-comment-by-id.handler';
+import { GetCommentByReferralHandler } from './application/queries/get-by-referral/get-comment-by-referral.handler';
+import { CommentsController } from './comments.controller';
 
-const CommandHandlers = [];
-const QueryHandlers = [];
+const CommandHandlers = [
+  CreateCommentHandler,
+  UpdateCommentHandler,
+  DeleteCommentHandler,
+];
+const QueryHandlers = [
+  GetCommentByIdHandler,
+  GetCommentByReferralHandler,
+];
 const EventHandlers = [];
 
 @Module({
