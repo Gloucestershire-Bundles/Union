@@ -40,6 +40,10 @@ export class CommentReadModelDatabaseRepository implements ICommentReadModelRepo
     private commentModel: Model<CommentDocument>,
     private readonly commentMapper: CommentMapper,
   ) {}
+  
+  findByReferral(reference: string): Promise<Array<ICommentReadModel>> {
+    throw new Error('Method not implemented.');
+  }
 
   findById(id: string): Promise<ICommentReadModel | null> {
     throw new Error('Method not implemented.');
