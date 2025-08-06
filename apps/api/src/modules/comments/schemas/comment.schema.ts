@@ -7,7 +7,7 @@ export class CommentEntity {
   authorId: string;
 
   @Prop({ required: true })
-  referralReference: string;
+  referralId: string;
 
   @Prop({ required: true })
   content: string;
