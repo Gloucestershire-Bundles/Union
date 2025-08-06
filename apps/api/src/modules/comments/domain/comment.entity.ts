@@ -1,5 +1,4 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { CommentCreatedEvent } from '@/comments/application/events/created/comment-created.event';
 
 export interface CommentProps {
   authorId: string;
@@ -29,14 +28,6 @@ export class Comment extends AggregateRoot implements CommentProps {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
-    comment.apply(
-      new CommentCreatedEvent(
-        comment.authorId,
-        comment.referralReference,
-        comment.content,
-      ),
-    );
     return comment;
   }
 

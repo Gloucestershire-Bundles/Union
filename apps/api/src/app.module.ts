@@ -9,6 +9,7 @@ import { AuthModule } from '@/auth/auth.module';
 import { ClerkAuthGuard } from '@/auth/guards/clerk-auth.guard';
 import { RolesGuard } from '@/auth/guards/roles.guard';
 import { CommentsModule } from './modules/comments/comments.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     AuthModule,
     ReferralsModule,
     CommentsModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [
