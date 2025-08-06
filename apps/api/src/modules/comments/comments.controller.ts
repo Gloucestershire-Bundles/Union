@@ -19,6 +19,7 @@ import { Request } from 'express';
 import { ClerkUser } from '../auth/interfaces/clerk-user.interface';
 import { CommentsService } from './comments.service';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
+import { CommentForbiddenException, CommentNotFoundException } from './models/comment.exception';
 
 @Controller('/v1/comments')
 export class CommentsController {
@@ -46,6 +47,7 @@ export class CommentsController {
    * @param referralId The ID of the referral.
    * @returns A Promise that resolves with an array of Comment.
    * Returns an empty array if no comments are found for the given referral ID.
+   * @throws {CommentForbiddenException} If the user is not authorized to view these comments.
    */
   @Get('/referral/:referralId')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
@@ -58,7 +60,7 @@ export class CommentsController {
 
     if (!(user.publicMetadata.role === Role.ADMINISTRATOR ||
           user.publicMetadata.role === Role.VOLUNTEER)) {
-      throw new ForbiddenException('You are not authorised to view these comments on this referral.',);
+      throw new CommentForbiddenException('You are not authorized to view comments on this referral.');
     }
     
     return this.commentsService.findAllByReferral(referralId);
@@ -68,14 +70,14 @@ export class CommentsController {
    * Handles GET /v1/referrals/:id endpoint to retrieve a single comment.
    * @param id The unique ID of the comment to retrieve.
    * @returns A Promise that resolves with the Comment type.
-   * @throws {NotFoundException} If the comment with the given ID is not found.
+   * @throws {CommentNotFoundException} If the comment with the given ID is not found.
    */
   @Get(':id')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     const comment = await this.commentsService.findOne(id);
-    if (!comment) throw new NotFoundException(`Comment ${id} not found.`);
+    if (!comment) throw new CommentNotFoundException(id);
     return comment;
   }
 
@@ -85,7 +87,7 @@ export class CommentsController {
    * @param id The unique ID of the comment.
    * @param updateCommentDto The DTO containing the new content.
    * @returns A success message.
-   * @throws {NotFoundException} If the comment is not found.
+   * @throws {CommentNotFoundException} If the comment is not found.
    */
   @Patch(':id')
   @Roles(Role.VOLUNTEER, Role.ADMINISTRATOR)
@@ -95,7 +97,7 @@ export class CommentsController {
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
     const comment = await this.commentsService.update(id, updateCommentDto);
-    if (!comment) throw new NotFoundException(`Comment ${id} not found.`);
+    if (!comment) throw new CommentNotFoundException(id);
     return comment;
   }
 
@@ -103,7 +105,7 @@ export class CommentsController {
    * Handles the DELETE /v1/comments/:id endpoint to permanently delete a comment.
    * @param id The unique ID of the comment to delete.
    * @returns A success message if the comment is deleted.
-   * @throws {NotFoundException} If the comment with the given ID is not found.
+   * @throws {CommentNotFoundException} If the comment with the given ID is not found.
    * @throws {InternalServerErrorException} For any unexpected errors during deletion.
    */
   @Delete(':id')
@@ -111,6 +113,6 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     const isDeleted = await this.commentsService.delete(id);
-    if (!isDeleted) throw new NotFoundException(`Comment ${id} not found.`);
+    if (!isDeleted) throw new CommentNotFoundException(id);
   }
 }

@@ -3,6 +3,7 @@ import { CommentsService } from '@/comments/comments.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Comment } from '@/comments/models/comment.type';
 import { CreateCommentDto } from '@/comments/dtos/create-comment.dto';
+import { UpdateCommentDto } from './dtos/update-comment.dto';
 
 describe('CommentsService', () => {
   let service: CommentsService;
@@ -92,7 +93,26 @@ describe('CommentsService', () => {
     });
   });
 
-  it('update', () => {});
+  it('should update a Comment and return the data', async () => {
+    const updateCommentDto = {
+      content: 'This is the new test content.',
+    } as UpdateCommentDto;
+
+    const comment = {
+      _id: '82a332e321oe48210de',
+      authorId: 'testAuthor',
+      referralId: 'GB-2W8XIF',
+      content: 'This is a test comment.',
+    };
+
+    jest.spyOn(mockCommentsModel, 'update').mockReturnValue(comment);
+
+    const result = await service.update(comment._id, updateCommentDto);
+
+    expect(result).toEqual(comment);
+    expect(mockCommentsModel.update).toHaveBeenCalled();
+    expect(mockCommentsModel.update).toHaveBeenCalledWith(comment._id, updateCommentDto);
+  });
 
   it('should delete a Comment by a given ID', async () => {
     const comment = {
