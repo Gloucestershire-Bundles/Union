@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from '@/auth/auth.module';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [CqrsModule, MongooseModule.forFeature([{}])],
-  controllers: [NotificationsController],
-  providers: [
-    ...CommandHandlers,
-    ...QueryHandlers,
-    ...EventHandlers,
-    {
-      provide: NOTIFICATION_REPOSITORY,
-      useClass: NotificationDatabaseRepository,
-    },
+  imports: [
+    EventEmitterModule,
+    MongooseModule.forFeature([]),
   ],
+  providers: [NotificationsService],
+  exports: [NotificationsService],
 })
+
 export class NotificationsModule {}

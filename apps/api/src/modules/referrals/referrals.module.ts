@@ -32,6 +32,7 @@ import { ReferralCreatedEventHandler } from './application/events/created/referr
 import { ReferralDeletedEventHandler } from './application/events/deleted/referral-deleted.handler';
 import { ReferralUpdatedEventHandler } from './application/events/updated/referral-updated.handler';
 import { ReferralNotCollectedEventHandler } from './application/events/not-collected/referral-not-collected.handler';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 const CommandHandlers = [
   ArchiveReferralHandler,
@@ -63,6 +64,7 @@ const EventHandlers = [
 @Module({
   imports: [
     CqrsModule,
+    EventEmitterModule,
     MongooseModule.forFeature([
       { name: ReferralEntity.name, schema: ReferralSchema },
     ]),

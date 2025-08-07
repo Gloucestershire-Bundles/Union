@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CommentEntity, CommentSchema } from '@/modules/comments/schemas/comment.schema';
+import { CommentEntity, CommentSchema } from '@/comments/schemas/comment.schema';
 import { CommentsController } from '@/comments/comments.controller';
 import { AuthModule } from '@/auth/auth.module';
-import { CommentsService } from './comments.service';
+import { CommentsService } from '@/comments/comments.service';
 
 @Module({
   imports: [

@@ -16,6 +16,8 @@
       "@/referrals/*": ["src/modules/referrals/*"],
       "@/comments/*": ["src/modules/comments/*"],
       "@/auth/*": ["src/modules/auth/*"],
+      "@/users/*": ["src/modules/users/*"],
+      "@/notifications/*": ["src/modules/notifications/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
