@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -6,21 +7,50 @@ import {
 import { Resend } from 'resend';
 import { createReferralEmailHTML } from './templates/create-referral.email';
 import { EmailTemplateData } from '@/notifications/models/email-template.type';
+import { CreateNotificationDto } from './dtos/create-notification.dto';
+import { Notification } from './models/notification.type';
+import { NotificationDocument, NotificationEntity } from './schemas/notification.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class NotificationsService {
   private resend: Resend;
   private readonly logger = new Logger(NotificationsService.name);
 
-  private emailTemplates = {
-    createReferral: (data: EmailTemplateData) => createReferralEmailHTML,
-  };
-
-  constructor() {
+  constructor(
+    @Inject(NotificationEntity.name)
+    private notificationModel: Model<NotificationDocument>,
+  ) {
     if (!process.env.RESEND_API_KEY) {
       throw new Error('RESEND_API_KEY is not defined in the environment.');
     }
     this.resend = new Resend(process.env.RESEND_API_KEY);
+  }
+
+  private emailTemplates = {
+    referralCreated: (data: EmailTemplateData) => createReferralEmailHTML,
+  };
+
+  async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
+    const notification = new this.notificationModel({ ...createNotificationDto });
+    return notification.save();
+  }
+
+  async createMany(createNotificationDtos: Array<CreateNotificationDto>): Promise<void> {
+    await this.notificationModel.insertMany(createNotificationDtos);
+  }
+
+  async findAll(): Promise<Array<Notification>> {
+    return this.notificationModel.find().exec();
+  }
+
+  async findOne(id: string): Promise<Notification | null> {
+    return this.notificationModel.findById({ _id: id }).exec();
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.notificationModel.deleteOne({ _id: id }).exec();
+    return result.deletedCount > 0;
   }
 
   async sendEmail(

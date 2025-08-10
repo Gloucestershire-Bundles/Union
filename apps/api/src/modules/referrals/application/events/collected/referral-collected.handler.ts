@@ -8,5 +8,9 @@ export class ReferralCollectedEventHandler implements IEventHandler<ReferralColl
 
   handle(event: ReferralCollectedEvent) {
     this.logger.log('Collected event fired.')
+
+    // TODO: Email with an attachment of the PDF.
+    // TODO: Audit Module 
+    // TODO: Create notification in submission dashboard
   }
 }

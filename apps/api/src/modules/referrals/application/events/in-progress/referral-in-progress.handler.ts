@@ -8,5 +8,8 @@ export class ReferralInProgressEventHandler implements IEventHandler<ReferralInP
 
   handle(event: ReferralInProgressEvent) {
     this.logger.log('InProgress event fired.')
+
+    // TODO: Create notification in submission dashboard
+    // TODO: Audit module
   }
 }

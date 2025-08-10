@@ -8,5 +8,7 @@ export class ReferralUpdatedEventHandler implements IEventHandler<ReferralUpdate
 
   handle(event: ReferralUpdatedEvent) {
     this.logger.log('Updated event fired.')
+
+    // TODO: Audit Module
   }
 }

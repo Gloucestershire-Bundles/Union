@@ -8,5 +8,10 @@ export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralN
 
   handle(event: ReferralNotCollectedEvent) {
     this.logger.log('NotCollected event fired.')
+
+    // TODO: Create notification in submission dashboard
+    // TODO: Create notification in management dashboard
+    // TODO: Audit module
+    // TODO: Re-book collection appointment
   }
 }

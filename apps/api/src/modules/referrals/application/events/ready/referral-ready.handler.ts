@@ -8,5 +8,9 @@ export class ReferralReadyEventHandler implements IEventHandler<ReferralReadyEve
 
   handle(event: ReferralReadyEvent) {
     this.logger.log('Ready event fired.')
+
+    // TODO: Create notification in submission dashboard
+    // TODO: Propose an ability to book a collection
+    // TODO: Audit module
   }
 }

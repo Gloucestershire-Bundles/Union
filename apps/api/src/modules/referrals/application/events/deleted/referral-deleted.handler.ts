@@ -8,5 +8,7 @@ export class ReferralDeletedEventHandler implements IEventHandler<ReferralDelete
 
   handle(event: ReferralDeletedEvent) {
     this.logger.log('Deleted event fired.')
+
+    // TODO: Audit Module
   }
 }

@@ -8,5 +8,8 @@ export class ReferralRejectedEventHandler implements IEventHandler<ReferralRejec
 
   handle(event: ReferralRejectedEvent) {
     this.logger.log('Rejected event fired.')
+
+    // TODO: Create notification in submission dashboard
+    // TODO: Audit Module
   }
 }

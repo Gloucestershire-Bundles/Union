@@ -36,7 +36,7 @@ export class CommentsService {
     id: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment | null> {
-    const comment = await this.commentModel.findById(id).exec();
+    const comment = await this.commentModel.findById({ _id: id }).exec();
 
     if (!comment) return null;
 

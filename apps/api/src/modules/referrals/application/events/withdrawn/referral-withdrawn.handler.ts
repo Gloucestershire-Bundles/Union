@@ -8,5 +8,9 @@ export class ReferralWithdrawnEventHandler implements IEventHandler<ReferralWith
 
   handle(event: ReferralWithdrawnEvent) {
     this.logger.log('Withdrawn event fired.')
+
+    // TODO: Create notification in submission dashboard
+    // TODO: Create notification in management dashboard
+    // TODO: Audit Module
   }
 }
