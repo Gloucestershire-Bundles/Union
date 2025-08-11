@@ -4,7 +4,7 @@ import { ReferralDetails } from "@/referrals/domain/models/interfaces/referral-d
 type ReferralEmailData = {
   reference: string;
   status: ReferralStatus;
-  details: ReferralDetails;
+  details?: ReferralDetails;
 }
 
 export type EmailTemplateData = {

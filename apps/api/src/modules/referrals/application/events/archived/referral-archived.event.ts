@@ -10,7 +10,7 @@ export class ReferralArchivedEvent {
    */
   constructor(
     public readonly reference: string,
-    public readonly reason?: string,
+    public readonly archivedReason?: string,
     public readonly archivedAt?: Date,
   ) {}
 }

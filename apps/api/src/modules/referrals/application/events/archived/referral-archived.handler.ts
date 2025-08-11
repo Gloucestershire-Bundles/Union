@@ -1,25 +1,26 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { ReferralArchivedEvent } from './referral-archived.event';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '@/users/users.service';
 import { NotificationsService } from '@/notifications/notifications.service';
 import { Role } from '@/common/enums/role.enum';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @EventsHandler(ReferralArchivedEvent)
-export class ReferralArchivedEventHandler
-  implements IEventHandler<ReferralArchivedEvent>
-{
+@Injectable()
+export class ReferralArchivedEventHandler implements IEventHandler<ReferralArchivedEvent> {
   private readonly logger = new Logger(ReferralArchivedEventHandler.name);
 
   constructor(
-    private readonly usersService: UsersService,
-    private readonly notificationsService: NotificationsService,
+    private readonly userService: UsersService,
+    private readonly notificationService: NotificationsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async handle(event: ReferralArchivedEvent): Promise<void> {
-    this.logger.log('Archived event fired.');
+    this.logger.log(`[Event] Referral ${event.reference} has been archived.`);
 
-    const volunteers = await this.usersService.findAllByRole(Role.VOLUNTEER);
+    const volunteers = await this.userService.findAllByRole(Role.VOLUNTEER);
 
     const volunteerNotification = {
       title: 'Referral Archived',
@@ -32,8 +33,12 @@ export class ReferralArchivedEventHandler
       recipient: volunteer.id,
     }));
 
-    await this.notificationsService.createMany(createVolunteerNotifications);
+    await this.notificationService.createMany(createVolunteerNotifications);
 
-    // TODO: Audit Module
+    this.eventEmitter.emit('referral.archived.audit', {
+      reference: event.reference,
+      timestamp: event.archivedAt,
+      reason: event.archivedReason,
+    });
   }
 }

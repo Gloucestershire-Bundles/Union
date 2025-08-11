@@ -5,12 +5,16 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Resend } from 'resend';
-import { createReferralEmailHTML } from './templates/create-referral.email';
 import { EmailTemplateData } from '@/notifications/models/email-template.type';
 import { CreateNotificationDto } from './dtos/create-notification.dto';
 import { Notification } from './models/notification.type';
 import { NotificationDocument, NotificationEntity } from './schemas/notification.schema';
 import { Model } from 'mongoose';
+import { referralCreatedEmailHTML } from './templates/referral-created.email';
+import { referralCollectedEmailHTML } from './templates/referral-collected.email';
+import { referralNotCollectedEmailHTML } from './templates/referral-not-collected.email';
+import { referralRejectedEmailHTML } from './templates/referral-rejected.email';
+import { referralWithdrawnEmailHTML } from './templates/referral-withdrawn.email';
 
 @Injectable()
 export class NotificationsService {
@@ -28,7 +32,12 @@ export class NotificationsService {
   }
 
   private emailTemplates = {
-    referralCreated: (data: EmailTemplateData) => createReferralEmailHTML,
+    referralCreated: (data: EmailTemplateData) => referralCreatedEmailHTML,
+    referralCollected: (data: EmailTemplateData) => referralCollectedEmailHTML,
+    referralNotCollected: (data: EmailTemplateData) => referralNotCollectedEmailHTML,
+    referralReady: (data: EmailTemplateData) => referralCreatedEmailHTML,
+    referralRejected: (data: EmailTemplateData) => referralRejectedEmailHTML,
+    referralWithdrawn: (data: EmailTemplateData) => referralWithdrawnEmailHTML,
   };
 
   async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {

@@ -17,7 +17,9 @@ export interface ReferralProps {
   details: ReferralDetails;
   status: ReferralStatus;
   withdrawnAt?: Date;
+  withdrawnReason?: string;
   archivedAt?: Date;
+  archivedReason?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,7 +30,9 @@ export class Referral extends AggregateRoot implements ReferralProps {
   details: ReferralDetails;
   status: ReferralStatus;
   withdrawnAt?: Date;
+  withdrawnReason?: string;
   archivedAt?: Date;
+  archivedReason?: string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -48,7 +52,9 @@ export class Referral extends AggregateRoot implements ReferralProps {
       details: details,
       status: ReferralStatus.REVIEW,
       withdrawnAt: undefined,
+      withdrawnReason: undefined,
       archivedAt: undefined,
+      archivedReason: undefined,
     });
 
     referral.apply(
@@ -79,6 +85,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
       case ReferralStatus.ARCHIVED:
         this.status = ReferralStatus.ARCHIVED;
         this.archivedAt = new Date();
+        this.archivedReason = "";
         this.apply(new ReferralArchivedEvent(this.reference, reason, this.archivedAt));
         break;
 
@@ -98,7 +105,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.NOT_COLLECTED;
-        this.apply(new ReferralNotCollectedEvent(this.reference, reason));
+        this.apply(new ReferralNotCollectedEvent(this.reference, this.refereeId, this.details, this.status));
         break;
 
       case ReferralStatus.COLLECTED:
@@ -107,7 +114,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.COLLECTED;
-        this.apply(new ReferralCollectedEvent(this.reference));
+        this.apply(new ReferralCollectedEvent(this.reference, this.refereeId, this.status, this.details));
         break;
 
       case ReferralStatus.READY:
@@ -119,7 +126,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.READY;
-        this.apply(new ReferralReadyEvent(this.reference));
+        this.apply(new ReferralReadyEvent(this.reference, this.refereeId, this.status));
         break;
 
       case ReferralStatus.IN_PROGRESS:
@@ -128,7 +135,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.IN_PROGRESS;
-        this.apply(new ReferralInProgressEvent(this.reference));
+        this.apply(new ReferralInProgressEvent(this.reference, this.refereeId));
         break;
 
       case ReferralStatus.REJECTED:
@@ -149,7 +156,7 @@ export class Referral extends AggregateRoot implements ReferralProps {
         }
 
         this.status = ReferralStatus.ACCEPTED;
-        this.apply(new ReferralAcceptedEvent(this.reference));
+        this.apply(new ReferralAcceptedEvent(this.reference, this.refereeId));
         break;
 
       case ReferralStatus.REVIEW:

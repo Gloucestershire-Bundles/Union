@@ -5,12 +5,14 @@
 export class ReferralWithdrawnEvent {
   /**
    * @param reference The unique business reference of the created referral.
-   * @param reason The reason given for withdrawing the referral.
+   * @param refereeId The unique ID of the referee.
+   * @param withdrawnReason The reason given for withdrawing the referral.
    * @param withdrawnAt The timestamp to which the referral is withdrawn.
    */
   constructor(
     public readonly reference: string,
-    public readonly reason?: string,
+    public readonly refereeId: string,
+    public readonly withdrawnReason?: string,
     public readonly withdrawnAt?: Date,
   ) {}
 }
