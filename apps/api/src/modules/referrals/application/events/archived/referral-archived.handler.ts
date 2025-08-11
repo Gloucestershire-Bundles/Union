@@ -3,6 +3,7 @@ import { ReferralArchivedEvent } from './referral-archived.event';
 import { Logger } from '@nestjs/common';
 import { UsersService } from '@/users/users.service';
 import { NotificationsService } from '@/notifications/notifications.service';
+import { Role } from '@/common/enums/role.enum';
 
 @EventsHandler(ReferralArchivedEvent)
 export class ReferralArchivedEventHandler
@@ -15,7 +16,7 @@ export class ReferralArchivedEventHandler
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async handle(event: ReferralArchivedEvent) {
+  async handle(event: ReferralArchivedEvent): Promise<void> {
     this.logger.log('Archived event fired.');
 
     const volunteers = await this.usersService.findAllByRole(Role.VOLUNTEER);

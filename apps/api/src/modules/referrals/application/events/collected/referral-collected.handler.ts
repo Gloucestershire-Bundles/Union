@@ -6,8 +6,8 @@ import { Logger } from "@nestjs/common";
 export class ReferralCollectedEventHandler implements IEventHandler<ReferralCollectedEvent> {
   private readonly logger = new Logger(ReferralCollectedEventHandler.name);
 
-  handle(event: ReferralCollectedEvent) {
-    this.logger.log('Collected event fired.')
+  async handle(event: ReferralCollectedEvent): Promise<void> {
+    this.logger.log('Collected event fired.');
 
     // TODO: Email with an attachment of the PDF.
     // TODO: Audit Module 
