@@ -1,6 +1,6 @@
 import { Public_Sans } from "next/font/google";
 import { ThemeProvider } from "@/hooks/providers/ThemeProvider";
-import { ClerkProvider, useAuth, useUser } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";

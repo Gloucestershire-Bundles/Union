@@ -1,3 +1,10 @@
+import { ReferralDataTable } from "@/components/referrals/ReferralDataTable";
+
 export default function Home() {
-  return <p>Home</p>;
+  return (
+    <div>
+      <h1>Welcome back, {}</h1>
+      <ReferralDataTable />
+    </div>
+  );
 }
