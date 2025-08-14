@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  LogOut,
-  Palette,
-} from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, LogOut, Palette } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -14,7 +9,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -23,16 +24,18 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  SignedIn,
-  useAuth,
-  useUser,
-} from "@clerk/nextjs";
+import { SignedIn, useAuth, useClerk, useUser } from "@clerk/nextjs";
+import { useState } from "react";
+import { useTheme } from "next-themes";
 
 export function NavUser() {
+  const [appTheme, setAppTheme] = useState("system");
+
   const { user } = useUser();
+  const { openUserProfile } = useClerk();
   const { signOut } = useAuth();
   const { isMobile } = useSidebar();
+  const { setTheme } = useTheme();
 
   return (
     <SidebarMenu>
@@ -45,12 +48,17 @@ export function NavUser() {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`} />
+                  <AvatarImage
+                    src={user?.imageUrl}
+                    alt={`${user?.firstName} ${user?.lastName}`}
+                  />
                   <AvatarFallback className="rounded-lg">?</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
-                  <span className="truncate text-xs">{user?.emailAddresses[0].emailAddress}</span>
+                  <span className="truncate text-xs">
+                    {user?.emailAddresses[0].emailAddress}
+                  </span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
@@ -64,25 +72,53 @@ export function NavUser() {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user?.imageUrl} alt={`${user?.firstName} ${user?.lastName}`} />
+                    <AvatarImage
+                      src={user?.imageUrl}
+                      alt={`${user?.firstName} ${user?.lastName}`}
+                    />
                     <AvatarFallback className="rounded-lg">?</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{`${user?.firstName} ${user?.lastName}`}</span>
-                    <span className="truncate text-xs">{user?.emailAddresses[0].emailAddress}</span>
+                    <span className="truncate text-xs">
+                      {user?.emailAddresses[0].emailAddress}
+                    </span>
                   </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openUserProfile()}>
                   <BadgeCheck />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Palette />
-                  Theme
-                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Palette className="h-4 w-4 mr-2" color="gray" />
+                    Theme
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuRadioGroup
+                        value={appTheme}
+                        onValueChange={(value) => {
+                          setTheme(value);
+                          setAppTheme(value);
+                        }}
+                      >
+                        <DropdownMenuRadioItem value="light">
+                          Light
+                        </DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="dark">
+                          Dark
+                        </DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="system">
+                          System
+                        </DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()}>
