@@ -1,3 +1,1 @@
-export class NotificationsController {
-    
-}
+export class NotificationsController {}

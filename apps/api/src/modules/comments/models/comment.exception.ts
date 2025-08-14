@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
 
