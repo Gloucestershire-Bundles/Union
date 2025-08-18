@@ -1,12 +1,14 @@
-import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { ReferralReadyEvent } from "./referral-ready.event";
-import { Logger } from "@nestjs/common";
-import { UsersService } from "@/users/users.service";
-import { NotificationsService } from "@/notifications/notifications.service";
-import { EventEmitter2 } from "@nestjs/event-emitter";
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ReferralReadyEvent } from './referral-ready.event';
+import { Logger } from '@nestjs/common';
+import { UsersService } from '@/users/users.service';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @EventsHandler(ReferralReadyEvent)
-export class ReferralReadyEventHandler implements IEventHandler<ReferralReadyEvent> {
+export class ReferralReadyEventHandler
+  implements IEventHandler<ReferralReadyEvent>
+{
   private readonly logger = new Logger(ReferralReadyEventHandler.name);
 
   constructor(
@@ -16,7 +18,9 @@ export class ReferralReadyEventHandler implements IEventHandler<ReferralReadyEve
   ) {}
 
   async handle(event: ReferralReadyEvent): Promise<void> {
-    this.logger.log(`[Event] Referral ${event.reference} has been moved to Ready.`);
+    this.logger.log(
+      `[Event] Referral ${event.reference} has been moved to Ready.`,
+    );
 
     const referee = await this.userService.findOne(event.refereeId);
 
@@ -32,7 +36,7 @@ export class ReferralReadyEventHandler implements IEventHandler<ReferralReadyEve
             status: event.status,
           },
         },
-      ); 
+      );
     }
 
     await this.notificationService.create({

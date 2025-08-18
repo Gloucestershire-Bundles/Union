@@ -77,7 +77,9 @@ export class Referral extends AggregateRoot implements ReferralProps {
    * @throws {Error} If the status transition is invalid according to business rules.
    */
   updateStatus(newStatus: ReferralStatus, reason?: string): void {
-    if (this.status === newStatus) { return; }
+    if (this.status === newStatus) {
+      return;
+    }
 
     const oldStatus = this.status;
 
@@ -85,36 +87,66 @@ export class Referral extends AggregateRoot implements ReferralProps {
       case ReferralStatus.ARCHIVED:
         this.status = ReferralStatus.ARCHIVED;
         this.archivedAt = new Date();
-        this.archivedReason = "";
-        this.apply(new ReferralArchivedEvent(this.reference, reason, this.archivedAt));
+        this.archivedReason = '';
+        this.apply(
+          new ReferralArchivedEvent(this.reference, reason, this.archivedAt),
+        );
         break;
 
       case ReferralStatus.WITHDRAWN:
         if (this.status === ReferralStatus.ARCHIVED) {
-          throw new Error(`Referral ${this.reference} cannot be withdrawn from its current status: ${this.status}.`);
+          throw new Error(
+            `Referral ${this.reference} cannot be withdrawn from its current status: ${this.status}.`,
+          );
         }
 
         this.status = ReferralStatus.WITHDRAWN;
         this.withdrawnAt = new Date();
-        this.apply(new ReferralWithdrawnEvent(this.reference, reason, this.withdrawnAt));
+        this.withdrawnReason = reason;
+        this.apply(
+          new ReferralWithdrawnEvent(
+            this.reference,
+            this.refereeId,
+            reason,
+            this.withdrawnAt,
+          ),
+        );
         break;
 
       case ReferralStatus.NOT_COLLECTED:
         if (this.status !== ReferralStatus.READY) {
-          throw new Error(`Referral ${this.reference} is not yet ready for collection.`);
+          throw new Error(
+            `Referral ${this.reference} is not yet ready for collection.`,
+          );
         }
 
         this.status = ReferralStatus.NOT_COLLECTED;
-        this.apply(new ReferralNotCollectedEvent(this.reference, this.refereeId, this.details, this.status));
+        this.apply(
+          new ReferralNotCollectedEvent(
+            this.reference,
+            this.refereeId,
+            this.details,
+            this.status,
+          ),
+        );
         break;
 
       case ReferralStatus.COLLECTED:
         if (this.status !== ReferralStatus.READY) {
-          throw new Error(`Referral ${this.reference} is not yet ready for collection.`);
+          throw new Error(
+            `Referral ${this.reference} is not yet ready for collection.`,
+          );
         }
 
         this.status = ReferralStatus.COLLECTED;
-        this.apply(new ReferralCollectedEvent(this.reference, this.refereeId, this.status, this.details));
+        this.apply(
+          new ReferralCollectedEvent(
+            this.reference,
+            this.refereeId,
+            this.status,
+            this.details,
+          ),
+        );
         break;
 
       case ReferralStatus.READY:
@@ -122,16 +154,22 @@ export class Referral extends AggregateRoot implements ReferralProps {
           this.status !== ReferralStatus.IN_PROGRESS &&
           this.status !== ReferralStatus.ACCEPTED
         ) {
-          throw new Error(`Referral ${this.reference} cannot be set to "Ready" from ${this.status}. It must first be In Progress or Accepted.`);
+          throw new Error(
+            `Referral ${this.reference} cannot be set to "Ready" from ${this.status}. It must first be In Progress or Accepted.`,
+          );
         }
 
         this.status = ReferralStatus.READY;
-        this.apply(new ReferralReadyEvent(this.reference, this.refereeId, this.status));
+        this.apply(
+          new ReferralReadyEvent(this.reference, this.refereeId, this.status),
+        );
         break;
 
       case ReferralStatus.IN_PROGRESS:
         if (this.status !== ReferralStatus.ACCEPTED) {
-          throw new Error(`Referral ${this.reference} cannot be "In Progress" without first being accepted.`);
+          throw new Error(
+            `Referral ${this.reference} cannot be "In Progress" without first being accepted.`,
+          );
         }
 
         this.status = ReferralStatus.IN_PROGRESS;
@@ -143,16 +181,27 @@ export class Referral extends AggregateRoot implements ReferralProps {
           this.status !== ReferralStatus.REVIEW &&
           this.status !== ReferralStatus.ACCEPTED
         ) {
-          throw new Error(`Referral ${this.reference} cannot be rejected from status ${this.status}.`);
+          throw new Error(
+            `Referral ${this.reference} cannot be rejected from status ${this.status}.`,
+          );
         }
 
         this.status = ReferralStatus.REJECTED;
-        this.apply(new ReferralRejectedEvent(this.reference, reason));
+        this.apply(
+          new ReferralRejectedEvent(
+            this.reference,
+            this.refereeId,
+            this.status,
+            reason,
+          ),
+        );
         break;
 
       case ReferralStatus.ACCEPTED:
         if (this.status !== ReferralStatus.REVIEW) {
-          throw new Error(`Referral ${this.reference} cannot be accepted from status ${this.status}.`);
+          throw new Error(
+            `Referral ${this.reference} cannot be accepted from status ${this.status}.`,
+          );
         }
 
         this.status = ReferralStatus.ACCEPTED;
@@ -161,12 +210,16 @@ export class Referral extends AggregateRoot implements ReferralProps {
 
       case ReferralStatus.REVIEW:
         if (oldStatus !== ReferralStatus.REVIEW) {
-          throw new Error(`Referral ${this.reference} cannot revert to "Review" status from ${oldStatus}.`);
+          throw new Error(
+            `Referral ${this.reference} cannot revert to "Review" status from ${oldStatus}.`,
+          );
         }
         break;
 
       default:
-        throw new Error(`Unsupported status transition from ${this.status} to ${newStatus} for referral ${this.reference}.`);
+        throw new Error(
+          `Unsupported status transition from ${this.status} to ${String(newStatus)} for referral ${this.reference}.`,
+        );
     }
 
     this.updatedAt = new Date();
@@ -180,12 +233,17 @@ export class Referral extends AggregateRoot implements ReferralProps {
    * @throws {Error} If the referral's current status disallows details updates.
    */
   updateDetails(newDetails: ReferralDetails): void {
-    if (this.status === ReferralStatus.ARCHIVED || this.status === ReferralStatus.WITHDRAWN) {
-      throw new Error(`Referral ${this.reference} details cannot be updated when in status ${this.status}.`);
+    if (
+      this.status === ReferralStatus.ARCHIVED ||
+      this.status === ReferralStatus.WITHDRAWN
+    ) {
+      throw new Error(
+        `Referral ${this.reference} details cannot be updated when in status ${this.status}.`,
+      );
     }
 
     if (JSON.stringify(this.details) === JSON.stringify(newDetails)) {
-        return;
+      return;
     }
 
     this.details = newDetails;

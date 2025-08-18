@@ -6,7 +6,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @EventsHandler(ReferralAcceptedEvent)
 @Injectable()
-export class ReferralAcceptedEventHandler implements IEventHandler<ReferralAcceptedEvent> {
+export class ReferralAcceptedEventHandler
+  implements IEventHandler<ReferralAcceptedEvent>
+{
   private readonly logger = new Logger(ReferralAcceptedEventHandler.name);
 
   constructor(

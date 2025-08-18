@@ -23,7 +23,7 @@ export class UsersService {
       });
 
       const users: Array<User> = filteredUsers.map((user) => {
-        return user as User;
+        return user;
       });
 
       return users;

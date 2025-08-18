@@ -1,4 +1,4 @@
-import { ReferralStatus } from "@/common/enums/referral-status.enum";
+import { ReferralStatus } from '@/common/enums/referral-status.enum';
 
 /**
  * @class ReferralReadyEvent

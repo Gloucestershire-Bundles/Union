@@ -16,5 +16,6 @@ export class NotificationEntity {
   updatedAt?: Date;
 }
 
-export const NotificationSchema = SchemaFactory.createForClass(NotificationEntity);
+export const NotificationSchema =
+  SchemaFactory.createForClass(NotificationEntity);
 export type NotificationDocument = HydratedDocument<NotificationEntity>;

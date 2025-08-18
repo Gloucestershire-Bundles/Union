@@ -9,6 +9,6 @@ import { UsersService } from '@/users/users.service';
   imports: [AuthModule],
   controllers: [UsersController],
   providers: [UsersService, ClerkStrategy, ClerkClientProvider],
+  exports: [UsersService],
 })
-
 export class UsersModule {}

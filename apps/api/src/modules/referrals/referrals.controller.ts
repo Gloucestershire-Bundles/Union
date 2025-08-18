@@ -28,6 +28,7 @@ import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-d
 import { UpdateReferralStatusDto } from '@/referrals/application/dtos/update-referral-status.dto';
 import { UpdateReferralStatusCommand } from '@/referrals/application/commands/update/update-referral-status.command';
 import { UpdateReferralDetailsCommand } from '@/referrals/application/commands/update/update-referral-details.command';
+import { Referral } from '@/referrals/domain/referral.entity';
 
 @Controller('/v1/referrals')
 export class ReferralsController {
@@ -55,7 +56,10 @@ export class ReferralsController {
     );
 
     try {
-      const referral = await this.commandBus.execute(command);
+      const referral = await this.commandBus.execute<
+        CreateReferralCommand,
+        Referral
+      >(command);
       return {
         message: 'Referral created successfully.',
         reference: referral.reference,
@@ -82,7 +86,10 @@ export class ReferralsController {
   ): Promise<IReferralReadModel> {
     const query = new GetReferralByReferenceQuery(reference);
     try {
-      const referral = await this.queryBus.execute(query);
+      const referral = await this.queryBus.execute<
+        GetReferralByReferenceQuery,
+        IReferralReadModel
+      >(query);
       return referral;
     } catch (error) {
       if (error instanceof ReferralNotFoundException) {
@@ -105,7 +112,10 @@ export class ReferralsController {
     @Param('refereeId') refereeId: string,
   ): Promise<Array<IReferralReadModel>> {
     const query = new GetReferralsByRefereeQuery(refereeId);
-    const referrals = await this.queryBus.execute(query);
+    const referrals = await this.queryBus.execute<
+      GetReferralsByRefereeQuery,
+      Array<IReferralReadModel>
+    >(query);
     return referrals;
   }
 
@@ -119,7 +129,10 @@ export class ReferralsController {
   @HttpCode(HttpStatus.OK)
   async getReferrals(): Promise<Array<IReferralReadModel>> {
     const query = new GetReferralsQuery();
-    const referrals = await this.queryBus.execute(query);
+    const referrals = await this.queryBus.execute<
+      GetReferralsQuery,
+      Array<IReferralReadModel>
+    >(query);
     return referrals;
   }
 

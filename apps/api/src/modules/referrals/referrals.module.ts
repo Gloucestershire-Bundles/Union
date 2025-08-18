@@ -33,10 +33,13 @@ import { ReferralDeletedEventHandler } from './application/events/deleted/referr
 import { ReferralUpdatedEventHandler } from './application/events/updated/referral-updated.handler';
 import { ReferralNotCollectedEventHandler } from './application/events/not-collected/referral-not-collected.handler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { UsersModule } from '../users/users.module';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 const CommandHandlers = [
   ArchiveReferralHandler,
-  CreateReferralHandler, 
+  CreateReferralHandler,
   DeleteReferralHandler,
   UpdateReferralHandler,
   WithdrawReferralHandler,
@@ -63,6 +66,8 @@ const EventHandlers = [
 
 @Module({
   imports: [
+    UsersModule,
+    NotificationsModule,
     CqrsModule,
     EventEmitterModule,
     MongooseModule.forFeature([
@@ -74,9 +79,9 @@ const EventHandlers = [
     ...CommandHandlers,
     ...QueryHandlers,
     ...EventHandlers,
-    { 
-      provide: REFERRAL_REPOSITORY, 
-      useClass: ReferralDatabaseRepository 
+    {
+      provide: REFERRAL_REPOSITORY,
+      useClass: ReferralDatabaseRepository,
     },
     {
       provide: REFERRAL_READ_MODEL_REPOSITORY,

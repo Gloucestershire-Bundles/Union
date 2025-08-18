@@ -1,13 +1,15 @@
-import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { ReferralUpdatedEvent } from "./referral-updated.event";
-import { Logger } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { NotificationsService } from "@/notifications/notifications.service";
-import { UsersService } from "@/users/users.service";
-import { Role } from "@/common/enums/role.enum";
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ReferralUpdatedEvent } from './referral-updated.event';
+import { Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { UsersService } from '@/users/users.service';
+import { Role } from '@/common/enums/role.enum';
 
 @EventsHandler(ReferralUpdatedEvent)
-export class ReferralUpdatedEventHandler implements IEventHandler<ReferralUpdatedEvent> {
+export class ReferralUpdatedEventHandler
+  implements IEventHandler<ReferralUpdatedEvent>
+{
   private readonly logger = new Logger(ReferralUpdatedEventHandler.name);
 
   constructor(
@@ -20,7 +22,7 @@ export class ReferralUpdatedEventHandler implements IEventHandler<ReferralUpdate
     this.logger.log(`[Event] Referral ${event.reference} has been updated.`);
 
     const volunteers = await this.userService.findAllByRole(Role.VOLUNTEER);
-    
+
     const volunteerNotification = {
       title: 'Referral Updated',
       description: `A new Referral ${event.reference} has been updated.`,

@@ -1,13 +1,15 @@
-import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { ReferralNotCollectedEvent } from "./referral-not-collected.event";
-import { Logger } from "@nestjs/common";
-import { NotificationsService } from "@/notifications/notifications.service";
-import { UsersService } from "@/users/users.service";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Role } from "@/common/enums/role.enum";
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ReferralNotCollectedEvent } from './referral-not-collected.event';
+import { Logger } from '@nestjs/common';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { UsersService } from '@/users/users.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Role } from '@/common/enums/role.enum';
 
 @EventsHandler(ReferralNotCollectedEvent)
-export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralNotCollectedEvent> {
+export class ReferralNotCollectedEventHandler
+  implements IEventHandler<ReferralNotCollectedEvent>
+{
   private readonly logger = new Logger(ReferralNotCollectedEventHandler.name);
 
   constructor(
@@ -17,7 +19,9 @@ export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralN
   ) {}
 
   async handle(event: ReferralNotCollectedEvent): Promise<void> {
-    this.logger.log(`[Event] Referral ${event.reference} has moved to Not Collected.`)
+    this.logger.log(
+      `[Event] Referral ${event.reference} has moved to Not Collected.`,
+    );
 
     const referee = await this.userService.findOne(event.refereeId);
 
@@ -33,7 +37,7 @@ export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralN
             status: event.status,
           },
         },
-      ); 
+      );
     }
 
     await this.notificationService.create({
@@ -44,7 +48,7 @@ export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralN
     });
 
     const volunteers = await this.userService.findAllByRole(Role.VOLUNTEER);
-    
+
     const volunteerNotification = {
       title: 'Referral Not Collected',
       description: `Referral ${event.reference} has not been collected.`,
@@ -53,7 +57,7 @@ export class ReferralNotCollectedEventHandler implements IEventHandler<ReferralN
 
     const createVolunteerNotifications = volunteers.map((volunteer) => ({
       ...volunteerNotification,
-      recipient: volunteer.id
+      recipient: volunteer.id,
     }));
 
     await this.notificationService.createMany(createVolunteerNotifications);

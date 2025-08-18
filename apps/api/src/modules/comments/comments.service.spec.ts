@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CommentsService } from '@/comments/comments.service';
+import { CommentsService } from './comments.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { Comment } from '@/comments/models/comment.type';
-import { CreateCommentDto } from '@/comments/dtos/create-comment.dto';
+import { Comment } from './models/comment.type';
+import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
+import { CommentEntity } from './schemas/comment.schema';
 
 describe('CommentsService', () => {
   let service: CommentsService;
@@ -21,7 +22,7 @@ describe('CommentsService', () => {
       providers: [
         CommentsService,
         {
-          provide: getModelToken(Comment.name),
+          provide: getModelToken(CommentEntity.name),
           useValue: mockCommentsModel,
         },
       ],
@@ -111,7 +112,10 @@ describe('CommentsService', () => {
 
     expect(result).toEqual(comment);
     expect(mockCommentsModel.update).toHaveBeenCalled();
-    expect(mockCommentsModel.update).toHaveBeenCalledWith(comment._id, updateCommentDto);
+    expect(mockCommentsModel.update).toHaveBeenCalledWith(
+      comment._id,
+      updateCommentDto,
+    );
   });
 
   it('should delete a Comment by a given ID', async () => {

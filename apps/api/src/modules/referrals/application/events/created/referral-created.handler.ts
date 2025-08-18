@@ -8,7 +8,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @EventsHandler(ReferralCreatedEvent)
 @Injectable()
-export class ReferralCreatedEventHandler implements IEventHandler<ReferralCreatedEvent> {
+export class ReferralCreatedEventHandler
+  implements IEventHandler<ReferralCreatedEvent>
+{
   private readonly logger = new Logger(ReferralCreatedEventHandler.name);
 
   constructor(
@@ -20,7 +22,7 @@ export class ReferralCreatedEventHandler implements IEventHandler<ReferralCreate
   async handle(event: ReferralCreatedEvent): Promise<void> {
     this.logger.log(`[Event] Referral ${event.reference} has been created.`);
 
-    const referee = await this. userService.findOne(event.refereeId);
+    const referee = await this.userService.findOne(event.refereeId);
 
     if (referee) {
       await this.notificationService.sendEmail(

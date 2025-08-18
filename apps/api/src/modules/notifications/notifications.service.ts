@@ -8,13 +8,16 @@ import { Resend } from 'resend';
 import { EmailTemplateData } from '@/notifications/models/email-template.type';
 import { CreateNotificationDto } from './dtos/create-notification.dto';
 import { Notification } from './models/notification.type';
-import { NotificationDocument, NotificationEntity } from './schemas/notification.schema';
+import {
+  NotificationEntity,
+} from './schemas/notification.schema';
 import { Model } from 'mongoose';
 import { referralCreatedEmailHTML } from './templates/referral-created.email';
 import { referralCollectedEmailHTML } from './templates/referral-collected.email';
 import { referralNotCollectedEmailHTML } from './templates/referral-not-collected.email';
 import { referralRejectedEmailHTML } from './templates/referral-rejected.email';
 import { referralWithdrawnEmailHTML } from './templates/referral-withdrawn.email';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class NotificationsService {
@@ -22,8 +25,8 @@ export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
 
   constructor(
-    @Inject(NotificationEntity.name)
-    private notificationModel: Model<NotificationDocument>,
+    @InjectModel(NotificationEntity.name)
+    private notificationModel: Model<NotificationEntity>,
   ) {
     if (!process.env.RESEND_API_KEY) {
       throw new Error('RESEND_API_KEY is not defined in the environment.');
@@ -32,20 +35,26 @@ export class NotificationsService {
   }
 
   private emailTemplates = {
-    referralCreated: (data: EmailTemplateData) => referralCreatedEmailHTML,
-    referralCollected: (data: EmailTemplateData) => referralCollectedEmailHTML,
-    referralNotCollected: (data: EmailTemplateData) => referralNotCollectedEmailHTML,
-    referralReady: (data: EmailTemplateData) => referralCreatedEmailHTML,
-    referralRejected: (data: EmailTemplateData) => referralRejectedEmailHTML,
-    referralWithdrawn: (data: EmailTemplateData) => referralWithdrawnEmailHTML,
+    referralCreated: () => referralCreatedEmailHTML,
+    referralCollected: () => referralCollectedEmailHTML,
+    referralNotCollected: () => referralNotCollectedEmailHTML,
+    referralReady: () => referralCreatedEmailHTML,
+    referralRejected: () => referralRejectedEmailHTML,
+    referralWithdrawn: () => referralWithdrawnEmailHTML,
   };
 
-  async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
-    const notification = new this.notificationModel({ ...createNotificationDto });
+  async create(
+    createNotificationDto: CreateNotificationDto,
+  ): Promise<Notification> {
+    const notification = new this.notificationModel({
+      ...createNotificationDto,
+    });
     return notification.save();
   }
 
-  async createMany(createNotificationDtos: Array<CreateNotificationDto>): Promise<void> {
+  async createMany(
+    createNotificationDtos: Array<CreateNotificationDto>,
+  ): Promise<void> {
     await this.notificationModel.insertMany(createNotificationDtos);
   }
 
@@ -75,7 +84,7 @@ export class NotificationsService {
     }
 
     try {
-      const emailHTML = templateFn(data);
+      const emailHTML = templateFn();
       const { error } = await this.resend.emails.send({
         from: 'Gloucestershire Bundles <noreply@gloucestershirebundles.org>',
         to: [to],

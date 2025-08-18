@@ -113,8 +113,9 @@ class ReferralDetailsSchemaClass implements ReferralDetails {
   file?: string;
 }
 
-export const ReferralDetailsSchema =
-  SchemaFactory.createForClass(ReferralDetailsSchemaClass);
+export const ReferralDetailsSchema = SchemaFactory.createForClass(
+  ReferralDetailsSchemaClass,
+);
 
 @Schema({ timestamps: true, collection: 'referrals' })
 export class ReferralEntity {

@@ -1,9 +1,14 @@
 import { EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { ArchiveReferralCommand } from './archive-referral.command';
 import { Inject, Logger } from '@nestjs/common';
-import { IReferralRepository, REFERRAL_REPOSITORY } from '@/referrals/domain/referral.repository';
+import {
+  IReferralRepository,
+  REFERRAL_REPOSITORY,
+} from '@/referrals/domain/referral.repository';
 
-export class ArchiveReferralHandler implements ICommandHandler<ArchiveReferralCommand> {
+export class ArchiveReferralHandler
+  implements ICommandHandler<ArchiveReferralCommand>
+{
   private readonly logger = new Logger(ArchiveReferralHandler.name);
 
   constructor(
@@ -11,8 +16,9 @@ export class ArchiveReferralHandler implements ICommandHandler<ArchiveReferralCo
     private readonly referralRepository: IReferralRepository,
     private readonly publisher: EventPublisher,
   ) {}
-  
-  execute(command: ArchiveReferralCommand): Promise<void> {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  execute(_command: ArchiveReferralCommand): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

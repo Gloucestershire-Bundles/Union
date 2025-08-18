@@ -17,7 +17,10 @@ import { Request } from 'express';
 import { ClerkUser } from '../auth/interfaces/clerk-user.interface';
 import { CommentsService } from './comments.service';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
-import { CommentForbiddenException, CommentNotFoundException } from './models/comment.exception';
+import {
+  CommentForbiddenException,
+  CommentNotFoundException,
+} from './models/comment.exception';
 
 @Controller('/v1/comments')
 export class CommentsController {
@@ -56,11 +59,17 @@ export class CommentsController {
   ) {
     const user = req.user as ClerkUser;
 
-    if (!(user.publicMetadata.role === Role.ADMINISTRATOR ||
-          user.publicMetadata.role === Role.VOLUNTEER)) {
-      throw new CommentForbiddenException('You are not authorized to view comments on this referral.');
+    if (
+      !(
+        user.publicMetadata.role === Role.ADMINISTRATOR ||
+        user.publicMetadata.role === Role.VOLUNTEER
+      )
+    ) {
+      throw new CommentForbiddenException(
+        'You are not authorized to view comments on this referral.',
+      );
     }
-    
+
     return this.commentsService.findAllByReferral(referralId);
   }
 

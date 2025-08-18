@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
+import { Request } from 'express';
 import { Role } from '@/common/enums/role.enum';
 import { ROLES_KEY } from '@/common/decorators/roles.decorator';
 import { ClerkUser } from '@/auth/interfaces/clerk-user.interface';
@@ -24,11 +25,14 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles) return true;
 
-    const { user } = context.switchToHttp().getRequest();
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { user: ClerkUser }>();
+    const { user } = request;
 
     if (!user) throw new ForbiddenException('User not authenticated.');
 
-    const clerkUser = user as ClerkUser;
+    const clerkUser = user;
 
     const userRoles: Role[] = [];
     if (

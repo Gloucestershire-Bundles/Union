@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { CreateReferralCommand } from './create-referral.command';
-import { ConflictException, Inject, Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import {
   IReferralRepository,
   REFERRAL_REPOSITORY,
@@ -47,15 +47,19 @@ export class CreateReferralHandler
     try {
       await this.referralRepository.save(referral);
     } catch (error) {
-      if (error.code === 11000 && error.message.includes('reference')) {
+      // Type guard for MongoDB duplicate key error
+      if (
+        this.isMongoDBDuplicateKeyError(error) &&
+        String(error.message).includes('reference')
+      ) {
         this.logger.warn(
           `[${CreateReferralHandler.name}] Referral with reference ${reference} already exists.`,
         );
         throw new ReferralAlreadyExistsException(reference);
       }
       this.logger.error(
-        `[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error.message}`,
-        error.stack,
+        `[${CreateReferralHandler.name}] Failed to create referral ${reference}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
       throw error;
     }
@@ -66,5 +70,20 @@ export class CreateReferralHandler
       `[${CreateReferralHandler.name}] Referral ${referral.reference} successfully created.`,
     );
     return referral;
+  }
+
+  /**
+   * Type guard to check if error is MongoDB duplicate key error
+   */
+  private isMongoDBDuplicateKeyError(
+    error: unknown,
+  ): error is { code: number; message: string } {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      'message' in error &&
+      (error as { code: unknown }).code === 11000
+    );
   }
 }

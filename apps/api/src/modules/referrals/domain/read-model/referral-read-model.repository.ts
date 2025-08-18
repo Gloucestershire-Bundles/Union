@@ -1,4 +1,4 @@
-import { IReferralReadModel } from "@/referrals/domain/read-model/referral-read-model.interface";
+import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
 
 export const REFERRAL_READ_MODEL_REPOSITORY = 'REFERRAL_READ_MODEL_REPOSITORY';
 

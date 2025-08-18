@@ -1,5 +1,5 @@
-import { ReferralStatus } from "@/common/enums/referral-status.enum";
-import { ICommand } from "@nestjs/cqrs";
+import { ReferralStatus } from '@/common/enums/referral-status.enum';
+import { ICommand } from '@nestjs/cqrs';
 
 export class UpdateReferralStatusCommand implements ICommand {
   constructor(

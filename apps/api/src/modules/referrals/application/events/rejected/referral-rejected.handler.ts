@@ -1,12 +1,14 @@
-import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { ReferralRejectedEvent } from "./referral-rejected.event";
-import { Logger } from "@nestjs/common";
-import { NotificationsService } from "@/modules/notifications/notifications.service";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { UsersService } from "@/modules/users/users.service";
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ReferralRejectedEvent } from './referral-rejected.event';
+import { Logger } from '@nestjs/common';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UsersService } from '@/modules/users/users.service';
 
 @EventsHandler(ReferralRejectedEvent)
-export class ReferralRejectedEventHandler implements IEventHandler<ReferralRejectedEvent> {
+export class ReferralRejectedEventHandler
+  implements IEventHandler<ReferralRejectedEvent>
+{
   private readonly logger = new Logger(ReferralRejectedEventHandler.name);
 
   constructor(
@@ -32,7 +34,7 @@ export class ReferralRejectedEventHandler implements IEventHandler<ReferralRejec
             status: event.status,
           },
         },
-      )
+      );
     }
 
     await this.notificationService.create({

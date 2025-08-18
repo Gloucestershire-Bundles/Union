@@ -1,5 +1,5 @@
-import { ReferralStatus } from "@/common/enums/referral-status.enum";
-import { ReferralDetails } from "@/referrals/domain/models/interfaces/referral-details.interface";
+import { ReferralStatus } from '@/common/enums/referral-status.enum';
+import { ReferralDetails } from '@/referrals/domain/models/interfaces/referral-details.interface';
 
 /**
  * @class ReferralNotCollectedEvent

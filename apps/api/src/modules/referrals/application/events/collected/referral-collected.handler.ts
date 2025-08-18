@@ -8,7 +8,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @EventsHandler(ReferralCollectedEvent)
 @Injectable()
-export class ReferralCollectedEventHandler implements IEventHandler<ReferralCollectedEvent> {
+export class ReferralCollectedEventHandler
+  implements IEventHandler<ReferralCollectedEvent>
+{
   private readonly logger = new Logger(ReferralCollectedEventHandler.name);
 
   constructor(
@@ -35,7 +37,7 @@ export class ReferralCollectedEventHandler implements IEventHandler<ReferralColl
             details: event.details,
           },
         },
-      ); 
+      );
     }
 
     await this.notificationService.create({

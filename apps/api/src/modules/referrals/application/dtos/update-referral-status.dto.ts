@@ -1,7 +1,7 @@
-import { ReferralStatus } from "@/common/enums/referral-status.enum";
-import { referralDocs } from "@/common/swagger/referral.swagger";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsOptional, IsString, MaxLength } from "class-validator";
+import { ReferralStatus } from '@/common/enums/referral-status.enum';
+import { referralDocs } from '@/common/swagger/referral.swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
 /**
  * @class UpdateReferralStatusDto
@@ -17,7 +17,8 @@ export class UpdateReferralStatusDto {
   status: ReferralStatus;
 
   @ApiPropertyOptional({
-    description: 'Optional reason for the status change (e.g., withdrawal or archive).',
+    description:
+      'Optional reason for the status change (e.g., withdrawal or archive).',
     example: 'Referral was incorrectly accepted.',
     required: false,
   })

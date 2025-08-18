@@ -4,7 +4,6 @@ import {
   ReferralEntity,
 } from '@/referrals/infrastructure/referral.schema';
 import { Referral } from '@/referrals/domain/referral.entity';
-import { ReferralStatus } from '@/common/enums/referral-status.enum';
 import { IReferralReadModel } from '@/referrals/domain/read-model/referral-read-model.interface';
 
 @Injectable()
@@ -23,7 +22,7 @@ export class ReferralMapper {
       reference: document.reference,
       refereeId: document.refereeId,
       details: document.details,
-      status: document.status as ReferralStatus,
+      status: document.status,
       withdrawnAt: document.withdrawnAt,
       archivedAt: document.archivedAt,
       createdAt: document.createdAt,

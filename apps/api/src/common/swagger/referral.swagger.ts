@@ -25,7 +25,8 @@ export const referralDocs = {
       gender: 'Gender of the child.',
       items: 'List of items requested for the child.',
       clothing: 'List of clothing items requested for the child.',
-      notes: 'Additional notes about the child (e.g., allergies, special needs)',
+      notes:
+        'Additional notes about the child (e.g., allergies, special needs)',
     },
     item: {
       item: 'Name of the item.',
@@ -37,13 +38,15 @@ export const referralDocs = {
       type: 'Type of clothing item (e.g., "top", "bottom")',
       size: 'The size of the clothing.',
       required: 'Indicates if the clothing is required.',
-      notes: 'Additional notes for the clothing item.'
+      notes: 'Additional notes for the clothing item.',
     },
     children: 'Array of children associated with the referral.',
     postcode: 'Postcode of the family receiving the referral',
-    reason: 'Reason for the referral (e.g., family circumstances, specific needs).',
-    isRepeatFamily: 'Indicates if this is a repeat referral for the same family.',
-    file: 'File URL for a home safety report.'
+    reason:
+      'Reason for the referral (e.g., family circumstances, specific needs).',
+    isRepeatFamily:
+      'Indicates if this is a repeat referral for the same family.',
+    file: 'File URL for a home safety report.',
   },
   example: {
     refereeId: 'aa4a3c82-3ff2-475d-b0e5-d2196520562c',
@@ -137,6 +140,6 @@ export const referralDocs = {
   },
   validation: {
     atLeastOneParent: 'At least one parent is required.',
-    atLeastOneChild: 'At least one child is required.'
+    atLeastOneChild: 'At least one child is required.',
   },
 };

@@ -1,11 +1,13 @@
-import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
-import { ReferralInProgressEvent } from "./referral-in-progress.event";
-import { Logger } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { NotificationsService } from "@/modules/notifications/notifications.service";
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { ReferralInProgressEvent } from './referral-in-progress.event';
+import { Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { NotificationsService } from '@/modules/notifications/notifications.service';
 
 @EventsHandler(ReferralInProgressEvent)
-export class ReferralInProgressEventHandler implements IEventHandler<ReferralInProgressEvent> {
+export class ReferralInProgressEventHandler
+  implements IEventHandler<ReferralInProgressEvent>
+{
   private readonly logger = new Logger(ReferralInProgressEventHandler.name);
 
   constructor(
@@ -14,7 +16,9 @@ export class ReferralInProgressEventHandler implements IEventHandler<ReferralInP
   ) {}
 
   async handle(event: ReferralInProgressEvent): Promise<void> {
-    this.logger.log(`[Event] Referral ${event.reference} has been moved to in progress.`)
+    this.logger.log(
+      `[Event] Referral ${event.reference} has been moved to in progress.`,
+    );
 
     await this.notificationService.create({
       title: 'Referral In Progress',

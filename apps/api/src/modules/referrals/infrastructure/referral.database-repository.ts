@@ -29,10 +29,14 @@ export class ReferralDatabaseRepository implements IReferralRepository {
   async findByReference(reference: string): Promise<Referral | null> {
     const document = await this.referralModel.findOne({ reference }).exec();
     if (!document) {
-      this.logger.debug(`[${ReferralDatabaseRepository.name}] No referral found with reference: ${reference}.`);
+      this.logger.debug(
+        `[${ReferralDatabaseRepository.name}] No referral found with reference: ${reference}.`,
+      );
       return null;
     }
-    this.logger.log(`[${ReferralDatabaseRepository.name}] Found referral with reference: ${reference}.`);
+    this.logger.log(
+      `[${ReferralDatabaseRepository.name}] Found referral with reference: ${reference}.`,
+    );
     return this.referralMapper.toDomain(document);
   }
 
@@ -48,16 +52,22 @@ export class ReferralDatabaseRepository implements IReferralRepository {
   async save(referral: Referral): Promise<void> {
     const persistenceObject = this.referralMapper.toPersistence(referral);
     if (!persistenceObject) {
-      this.logger.error(`[${ReferralDatabaseRepository.name}] Attempted to save a null referral.`);
+      this.logger.error(
+        `[${ReferralDatabaseRepository.name}] Attempted to save a null referral.`,
+      );
       throw new Error('Cannot save a null referral.');
     }
 
     const filter = { reference: referral.reference };
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-    await this.referralModel.findOneAndUpdate(filter, persistenceObject, options).exec();
+    await this.referralModel
+      .findOneAndUpdate(filter, persistenceObject, options)
+      .exec();
 
-    this.logger.log(`[${ReferralDatabaseRepository.name}] Referral saved: ${referral.reference}.`);
+    this.logger.log(
+      `[${ReferralDatabaseRepository.name}] Referral saved: ${referral.reference}.`,
+    );
   }
 
   /**
@@ -70,17 +80,25 @@ export class ReferralDatabaseRepository implements IReferralRepository {
     const isDeleted = result.deletedCount > 0;
 
     if (isDeleted) {
-      this.logger.log(`[${ReferralDatabaseRepository.name}] Successfully deleted referral: ${reference}.`);
+      this.logger.log(
+        `[${ReferralDatabaseRepository.name}] Successfully deleted referral: ${reference}.`,
+      );
     } else {
-      this.logger.warn(`[${ReferralDatabaseRepository.name}] Referral not found for deletion: ${reference}.`);
+      this.logger.warn(
+        `[${ReferralDatabaseRepository.name}] Referral not found for deletion: ${reference}.`,
+      );
     }
     return isDeleted;
   }
 }
 
 @Injectable()
-export class ReferralReadModelDatabaseRepository implements IReferralReadModelRepository {
-  private readonly logger = new Logger(ReferralReadModelDatabaseRepository.name);
+export class ReferralReadModelDatabaseRepository
+  implements IReferralReadModelRepository
+{
+  private readonly logger = new Logger(
+    ReferralReadModelDatabaseRepository.name,
+  );
 
   constructor(
     @InjectModel(ReferralEntity.name)
@@ -96,10 +114,14 @@ export class ReferralReadModelDatabaseRepository implements IReferralReadModelRe
   async findByReference(reference: string): Promise<IReferralReadModel | null> {
     const document = await this.referralModel.findOne({ reference }).exec();
     if (!document) {
-      this.logger.debug(`[${ReferralReadModelDatabaseRepository.name}] No referral found with reference: ${reference}.`);
+      this.logger.debug(
+        `[${ReferralReadModelDatabaseRepository.name}] No referral found with reference: ${reference}.`,
+      );
       return null;
     }
-    this.logger.log(`[${ReferralReadModelDatabaseRepository.name}] Found referral with reference: ${reference}.`);
+    this.logger.log(
+      `[${ReferralReadModelDatabaseRepository.name}] Found referral with reference: ${reference}.`,
+    );
     return this.referralMapper.toReadModel(document);
   }
 
@@ -110,7 +132,9 @@ export class ReferralReadModelDatabaseRepository implements IReferralReadModelRe
    */
   async findByRefereeId(refereeId: string): Promise<Array<IReferralReadModel>> {
     const documents = await this.referralModel.find({ refereeId }).exec();
-    this.logger.log(`[Database] Found ${documents.length} referrals for referee ${refereeId}.`);
+    this.logger.log(
+      `[Database] Found ${documents.length} referrals for referee ${refereeId}.`,
+    );
     return documents
       .map((document) => this.referralMapper.toReadModel(document))
       .filter((model): model is IReferralReadModel => model !== null);

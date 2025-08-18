@@ -8,5 +8,4 @@ import { ClerkClientProvider } from '@/auth/providers/clerk-client.provider';
   providers: [ClerkStrategy, ClerkClientProvider],
   exports: [ClerkStrategy, ClerkClientProvider],
 })
-
 export class AuthModule {}
