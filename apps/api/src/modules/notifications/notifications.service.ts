@@ -48,6 +48,8 @@ export class NotificationsService {
   ): Promise<Notification> {
     const notification = new this.notificationModel({
       ...createNotificationDto,
+      isRead: createNotificationDto.isRead ?? false,
+      isEmailSent: false,
     });
     return notification.save();
   }
@@ -55,15 +57,63 @@ export class NotificationsService {
   async createMany(
     createNotificationDtos: Array<CreateNotificationDto>,
   ): Promise<void> {
-    await this.notificationModel.insertMany(createNotificationDtos);
+    const notifications = createNotificationDtos.map(dto => ({
+      ...dto,
+      isRead: dto.isRead ?? false,
+      isEmailSent: false,
+    }));
+    await this.notificationModel.insertMany(notifications);
   }
 
   async findAll(): Promise<Array<Notification>> {
-    return this.notificationModel.find().exec();
+    return this.notificationModel.find().sort({ createdAt: -1 }).exec();
+  }
+
+  async findByRecipient(
+    recipientId: string,
+    limit: number = 50,
+    skip: number = 0,
+  ): Promise<Array<Notification>> {
+    return this.notificationModel
+      .find({ recipientId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .exec();
+  }
+
+  async findUnreadByRecipient(recipientId: string): Promise<Array<Notification>> {
+    return this.notificationModel
+      .find({ recipientId, isRead: false })
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
+  async getUnreadCount(recipientId: string): Promise<number> {
+    return this.notificationModel.countDocuments({ recipientId, isRead: false });
+  }
+
+  async markAsRead(id: string): Promise<Notification | null> {
+    return this.notificationModel
+      .findByIdAndUpdate(
+        id,
+        { isRead: true, readAt: new Date() },
+        { new: true }
+      )
+      .exec();
+  }
+
+  async markAllAsRead(recipientId: string): Promise<void> {
+    await this.notificationModel
+      .updateMany(
+        { recipientId, isRead: false },
+        { isRead: true, readAt: new Date() }
+      )
+      .exec();
   }
 
   async findOne(id: string): Promise<Notification | null> {
-    return this.notificationModel.findById({ _id: id }).exec();
+    return this.notificationModel.findById(id).exec();
   }
 
   async delete(id: string): Promise<boolean> {

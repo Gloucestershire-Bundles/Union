@@ -12,10 +12,33 @@ export class NotificationEntity {
   @Prop({ required: false })
   link?: string;
 
+  @Prop({ required: true, index: true })
+  recipientId: string;
+
+  @Prop({ required: true, index: true })
+  type: string;
+
+  @Prop({ default: false, index: true })
+  isRead: boolean;
+
+  @Prop({ default: false })
+  isEmailSent: boolean;
+
+  @Prop()
+  emailSentAt?: Date;
+
+  @Prop()
+  readAt?: Date;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export const NotificationSchema =
   SchemaFactory.createForClass(NotificationEntity);
+
+NotificationSchema.index({ recipientId: 1, createdAt: -1 });
+NotificationSchema.index({ recipientId: 1, isRead: 1 });
+NotificationSchema.index({ type: 1, createdAt: -1 });
+
 export type NotificationDocument = HydratedDocument<NotificationEntity>;

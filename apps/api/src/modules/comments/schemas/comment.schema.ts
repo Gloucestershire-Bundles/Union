@@ -3,10 +3,10 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'comments' })
 export class CommentEntity {
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   authorId: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   referralId: string;
 
   @Prop({ required: true })
@@ -17,4 +17,8 @@ export class CommentEntity {
 }
 
 export const CommentSchema = SchemaFactory.createForClass(CommentEntity);
+
+CommentSchema.index({ referralId: 1, createdAt: -1 });
+CommentSchema.index({ authorId: 1, createdAt: -1 });
+
 export type CommentDocument = HydratedDocument<CommentEntity>;

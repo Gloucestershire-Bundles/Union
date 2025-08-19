@@ -1,10 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateNotificationDto {
   @ApiProperty({
     description: 'Title of the notification.',
-    example: 'New Notification',
+    example: 'New Referral Created',
   })
   @IsNotEmpty()
   @IsString()
@@ -12,24 +12,42 @@ export class CreateNotificationDto {
 
   @ApiProperty({
     description: 'Unique identifier of the recipient.',
-    example: '213eosads4342381dssa',
+    example: 'user_213eosads4342381dssa',
   })
   @IsNotEmpty()
   @IsString()
-  recipient: string;
+  recipientId: string;
 
   @ApiProperty({
-    description: 'Private description of the notification.',
-    example: 'This is a new notification.',
+    description: 'Type of notification.',
+    example: 'referral_created',
+  })
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+
+  @ApiProperty({
+    description: 'Detailed description of the notification.',
+    example: 'A new referral has been created and requires your attention.',
   })
   @IsNotEmpty()
   @IsString()
   description: string;
 
-  @ApiProperty({
-    description: 'Link for the notification.',
-    example: 'https://example.com/product/434ee31235dadd352e',
+  @ApiPropertyOptional({
+    description: 'Optional link related to the notification.',
+    example: 'https://app.example.com/referrals/REF-123456',
   })
+  @IsOptional()
   @IsString()
   link?: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether the notification has been read.',
+    example: false,
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  isRead?: boolean;
 }

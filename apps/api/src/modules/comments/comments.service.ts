@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CommentDocument, CommentEntity } from './schemas/comment.schema';
+import { CommentDocument, CommentEntity } from '@/comments/schemas/comment.schema';
 import { Model } from 'mongoose';
-import { CreateCommentDto } from './dtos/create-comment.dto';
-import { Comment } from './models/comment.type';
-import { UpdateCommentDto } from './dtos/update-comment.dto';
+import { CreateCommentDto } from '@/comments/dtos/create-comment.dto';
+import { Comment } from '@/comments/models/comment.type';
+import { UpdateCommentDto } from '@/comments/dtos/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -24,8 +24,34 @@ export class CommentsService {
     return comment.save();
   }
 
-  async findAllByReferral(referralId: string): Promise<Array<Comment>> {
-    return this.commentModel.find({ referralId }).exec();
+  async findAllByReferral(
+    referralId: string,
+    limit: number = 100,
+    skip: number = 0,
+  ): Promise<Array<Comment>> {
+    return this.commentModel
+      .find({ referralId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .exec();
+  }
+
+  async findByAuthor(
+    authorId: string,
+    limit: number = 50,
+    skip: number = 0,
+  ): Promise<Array<Comment>> {
+    return this.commentModel
+      .find({ authorId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .exec();
+  }
+
+  async getCommentCount(referralId: string): Promise<number> {
+    return this.commentModel.countDocuments({ referralId });
   }
 
   async findOne(id: string): Promise<Comment | null> {
@@ -36,12 +62,9 @@ export class CommentsService {
     id: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment | null> {
-    const comment = await this.commentModel.findById({ _id: id }).exec();
-
-    if (!comment) return null;
-
-    comment.set(updateCommentDto);
-    return comment.save();
+    return this.commentModel
+      .findByIdAndUpdate(id, updateCommentDto, { new: true })
+      .exec();
   }
 
   async delete(id: string): Promise<boolean> {

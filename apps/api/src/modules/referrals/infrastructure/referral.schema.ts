@@ -119,27 +119,39 @@ export const ReferralDetailsSchema = SchemaFactory.createForClass(
 
 @Schema({ timestamps: true, collection: 'referrals' })
 export class ReferralEntity {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, index: true })
   reference: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: true })
   refereeId: string;
 
   @Prop({ type: ReferralDetailsSchema, required: true })
   details: ReferralDetails;
 
-  @Prop({ type: String, enum: ReferralStatus, default: ReferralStatus.REVIEW })
+  @Prop({ type: String, enum: ReferralStatus, default: ReferralStatus.REVIEW, index: true })
   status: ReferralStatus;
 
   @Prop({ type: Date, default: null })
   withdrawnAt?: Date;
 
+  @Prop({ type: String })
+  withdrawnReason?: string;
+
   @Prop({ type: Date, default: null })
   archivedAt?: Date;
+
+  @Prop({ type: String })
+  archivedReason?: string;
 
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export const ReferralSchema = SchemaFactory.createForClass(ReferralEntity);
+
+ReferralSchema.index({ refereeId: 1, status: 1 });
+ReferralSchema.index({ status: 1, createdAt: -1 });
+ReferralSchema.index({ createdAt: -1 });
+ReferralSchema.index({ 'details.postcode': 1 });
+
 export type ReferralDocument = HydratedDocument<ReferralEntity>;

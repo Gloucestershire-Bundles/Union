@@ -4,12 +4,16 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ReferralsModule } from '@/referrals/referrals.module';
 import { DatabaseModule } from '@/common/database/database.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from '@/auth/auth.module';
 import { ClerkAuthGuard } from '@/auth/guards/clerk-auth.guard';
 import { RolesGuard } from '@/auth/guards/roles.guard';
 import { CommentsModule } from '@/comments/comments.module';
 import { NotificationsModule } from '@/notifications/notifications.module';
+import { UsersModule } from '@/users/users.module';
+import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor';
+import { ErrorHandlingInterceptor } from '@/common/interceptors/error-handling.interceptor';
+import { BookingModule } from './modules/booking/booking.module';
 
 @Module({
   imports: [
@@ -28,9 +32,11 @@ import { NotificationsModule } from '@/notifications/notifications.module';
     }),
     DatabaseModule,
     AuthModule,
+    UsersModule,
     ReferralsModule,
     CommentsModule,
     NotificationsModule,
+    BookingModule,
   ],
   controllers: [],
   providers: [
@@ -41,6 +47,14 @@ import { NotificationsModule } from '@/notifications/notifications.module';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorHandlingInterceptor,
     },
   ],
 })
