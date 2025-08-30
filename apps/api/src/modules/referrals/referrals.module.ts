@@ -33,9 +33,8 @@ import { ReferralDeletedEventHandler } from './application/events/deleted/referr
 import { ReferralUpdatedEventHandler } from './application/events/updated/referral-updated.handler';
 import { ReferralNotCollectedEventHandler } from './application/events/not-collected/referral-not-collected.handler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { UsersModule } from '../users/users.module';
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationsModule } from '../notifications/notifications.module';
+import { UsersModule } from '@/users/users.module';
+import { NotificationsModule } from '@/notifications/notifications.module';
 
 const CommandHandlers = [
   ArchiveReferralHandler,

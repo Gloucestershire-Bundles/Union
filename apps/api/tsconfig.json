@@ -18,6 +18,7 @@
       "@/auth/*": ["src/modules/auth/*"],
       "@/users/*": ["src/modules/users/*"],
       "@/notifications/*": ["src/modules/notifications/*"],
+      "@/booking/*": ["src/modules/booking/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
